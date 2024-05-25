@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:the_movie_data_base/styles/theme_data.dart';
 import '../Tabs/tab_home_screen.dart';
 import '../Tabs/tab_tv_screen.dart';
 import '../Tabs/tab_account_screen.dart';
-
 
 void main() {
   runApp(const Dashboard());
@@ -14,7 +14,7 @@ class Dashboard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: ThemeData(),
+      theme: appTheme(),
       home: const LoadContent(),
     );
   }
@@ -42,7 +42,7 @@ class _LoadContentState extends State<LoadContent> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Henrito Movies'),
-        backgroundColor: Color.fromARGB(255, 184, 56, 47),
+        backgroundColor: Theme.of(context).primaryColor,
         toolbarHeight: 35,
         actions: [
           IconButton(
