@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:the_movie_data_base/screens/widgets/movie_widgets.dart';
+import 'package:the_movie_data_base/screens/Tabs/tab_ticket_screen.dart';
+import 'package:the_movie_data_base/screens/widgets/credit_widget.dart';
+import 'package:the_movie_data_base/screens/widgets/info_widget.dart';
 import 'package:the_movie_data_base/screens/widgets/trailer_widget.dart'; 
 
 class MovieDetailPage extends StatefulWidget {
@@ -13,8 +15,6 @@ class MovieDetailPage extends StatefulWidget {
 }
 
 class _MovieDetailPageState extends State<MovieDetailPage> {
-  final bool _showFullOverview = false;
-
 
   @override
   void initState() {
@@ -38,54 +38,87 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
   Future<Widget> _getMovieInfo() async {
     // Implementa la lógica para obtener la información de la película de forma asíncrona
     // Por ejemplo, showMovieInfo(widget.movie, _showFullOverview)
-    return showMovieInfo(widget.movie, _showFullOverview);
+    return MovieInfoWidget(movie:widget.movie);
   }
 
   Future<Widget> _getMovieCast() async {
     // Implementa la lógica para obtener el elenco de la película de forma asíncrona
     // Por ejemplo, showMovieCast(widget.movie)
-    return showMovieCast(widget.movie);
+    return CreditsWidget(movie:widget.movie);
   }
 
- @override
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: FutureBuilder(
         future: _loadMovieDetails(),
         builder: (context, AsyncSnapshot<List<Widget>> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            // Muestra el indicador de carga central mientras se cargan los datos
             return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
             return Center(
               child: Text('Error loading movie details: ${snapshot.error}'),
             );
           } else {
-            // Una vez que se completan todos los futures, muestra los widgets
-            return SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  snapshot.data![0], // Trailer widget
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: snapshot.data![1], // Movie information
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: snapshot.data![2], // Movie cast
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 40.0),
-                    child: ElevatedButton(
-                      onPressed: () {
-                        // Implementa la funcionalidad para comprar tiquetes
-                      },
-                      child: const Text('Comprar Tiquetes', style: TextStyle(fontSize: 18)),
+
+            return Stack(
+              children: [
+                // Este SingleChildScrollView contendrá el resto del contenido.
+                SingleChildScrollView(
+                  child: Padding(
+                    padding: EdgeInsets.only(top: 200), // Ajusta 300 según la altura del tráiler
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(10.0),
+                          child: snapshot.data![1], // Movie information
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(10.0),
+                          child: snapshot.data![2], // Movie cast
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 40.0),
+                          child: ElevatedButton(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                              MaterialPageRoute(
+                              builder: (context) => TabTicketScreen(selectedMovie: widget.movie),
+                              ),
+                            );
+                            },
+                            child: const Text('Comprar Tiquetes', style: TextStyle(fontSize: 18)),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                ],
-              ),
+                ),
+                // Este contenedor contendrá el tráiler y permanecerá fijo en la parte superior.
+                Positioned(
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  child: Stack(
+                    children: [
+                      Container(
+                        child: snapshot.data![0], // Trailer widget
+                      ),
+                      Positioned(
+                        top: 30,
+                        child: BackButton(
+                          color: Colors.white,
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             );
           }
         },

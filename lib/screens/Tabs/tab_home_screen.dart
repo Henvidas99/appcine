@@ -183,14 +183,14 @@ for (int i = 0; i < _recentMoviesData.length; i++) {
 final List<dynamic> topContent = allRecentData;
 
   return Padding(
-  padding: EdgeInsets.only(top: 8, bottom: 20),
+  padding: const EdgeInsets.only(top: 8, bottom: 20),
   child: CarouselSlider(
     options: CarouselOptions(
       height: 180.0,
       autoPlay: true,
       autoPlayInterval: const Duration(seconds: 3),
       enableInfiniteScroll: true,
-      autoPlayAnimationDuration: Duration(milliseconds: 800),
+      autoPlayAnimationDuration: const Duration(milliseconds: 800),
       pauseAutoPlayOnTouch: true,
       viewportFraction: 0.8,
       enlargeCenterPage: true,
@@ -355,7 +355,18 @@ Widget build(BuildContext context) {
       : DefaultTabController(
         length: 5,
         child: Scaffold(
-          appBar: null, // Elimina el AppBar
+          appBar: AppBar(
+        title: const Text('Henrito Movies'),
+        backgroundColor: Color.fromARGB(255, 184, 56, 47),
+        toolbarHeight: 35,
+        actions: [
+          IconButton(
+          icon: Icon(Icons.search),
+            onPressed: () {
+            },
+          ),
+        ], 
+      ),
           body: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:the_movie_data_base/styles/theme_data.dart';
 import '../Tabs/tab_home_screen.dart';
-import '../Tabs/tab_tv_screen.dart';
+import '../Tabs/tab_ticket_screen.dart';
 import '../Tabs/tab_account_screen.dart';
 
 void main() {
@@ -40,6 +40,7 @@ class _LoadContentState extends State<LoadContent> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+/*
       appBar: AppBar(
         title: const Text('Henrito Movies'),
         backgroundColor: Theme.of(context).primaryColor,
@@ -52,6 +53,7 @@ class _LoadContentState extends State<LoadContent> {
           ),
         ], 
       ),
+*/
       
       body: _buildPage(_selectedIndex),
       bottomNavigationBar: BottomNavigationBar(
@@ -61,8 +63,8 @@ class _LoadContentState extends State<LoadContent> {
             label: 'Home',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.tv),
-            label: 'Tv',
+            icon: Icon(Icons.confirmation_number),
+            label: 'Ticket',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
@@ -72,6 +74,7 @@ class _LoadContentState extends State<LoadContent> {
         currentIndex: _selectedIndex,
         selectedItemColor: Colors.red,
         onTap: _onItemTapped,
+        backgroundColor: Colors.black38,
       ),
     );
   }
@@ -81,7 +84,7 @@ class _LoadContentState extends State<LoadContent> {
       case 0:
         return const TabHomeScreen(); // Cargar pantalla de inicio
       case 1:
-        return const TabTvScreen(); // Cargar pantalla de búsqueda
+        return const TabTicketScreen(); // Cargar pantalla de búsqueda
       case 2:
         return const TabAccountScreen(); // Cargar pantalla de perfil
       default:

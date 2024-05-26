@@ -30,7 +30,7 @@ class _TrailerWidgetState extends State<TrailerWidget> {
         _videoKey = videoKey;
         _controller = YoutubePlayerController(
           initialVideoId: _videoKey,
-          flags: YoutubePlayerFlags(
+          flags: const YoutubePlayerFlags(
             enableCaption: true,
             autoPlay: false,
             mute: false,
