@@ -19,7 +19,7 @@ ThemeData appTheme() {
       titleSmall: TextStyle(color: AppColors.lightBackground),
     ),
     appBarTheme: const AppBarTheme(
-      color: AppColors.darkBackground,
+      color: AppColors.blackBackground,
       iconTheme: IconThemeData(color: AppColors.lightBackground),
       titleTextStyle: TextStyle(color: AppColors.lightBackground, fontSize: 20),
     ),

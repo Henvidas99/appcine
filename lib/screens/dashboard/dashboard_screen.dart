@@ -72,9 +72,10 @@ class _LoadContentState extends State<LoadContent> {
           ),
         ],
         currentIndex: _selectedIndex,
-        selectedItemColor: Colors.red,
+        unselectedItemColor: Theme.of(context).iconTheme.color,
+        selectedItemColor: Theme.of(context).primaryColor,
         onTap: _onItemTapped,
-        backgroundColor: Colors.black38,
+        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
       ),
     );
   }

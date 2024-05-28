@@ -10,7 +10,7 @@ class FullMovieListPage extends StatelessWidget {
 Widget build(BuildContext context) {
   return Scaffold(
     appBar: AppBar(
-       title: Text(title),
+       title: Text(title), centerTitle: true,
     ),
     body: GridView.count(
         crossAxisCount: 3, // Número de columnas en la cuadrícula

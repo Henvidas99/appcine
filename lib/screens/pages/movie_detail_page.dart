@@ -79,7 +79,7 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
                           child: snapshot.data![2], // Movie cast
                         ),
                         Padding(
-                          padding: const EdgeInsets.only(bottom: 40.0),
+                          padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
                           child: ElevatedButton(
                             onPressed: () {
                               Navigator.push(
@@ -89,7 +89,11 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
                               ),
                             );
                             },
-                            child: const Text('Comprar Tiquetes', style: TextStyle(fontSize: 18)),
+                            style: ElevatedButton.styleFrom(
+                            fixedSize: const Size.fromHeight(50),
+                            backgroundColor: const Color(0xFFE50914),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
+                            child: const Text('Comprar Tiquetes', style: TextStyle(fontSize: 18, color: Colors.white)),
                           ),
                         ),
                       ],

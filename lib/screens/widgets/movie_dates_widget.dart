@@ -161,7 +161,7 @@ class MovieDateCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorContainer = isSelected ? Color(0xFFE50914) : Colors.black12;
+    final colorContainer = isSelected ? Color(0xFFE50914) : Colors.black12    ;
     final colorText = isSelected ? Colors.black : Colors.grey;
 
     return Padding(

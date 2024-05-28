@@ -4,6 +4,7 @@ import 'package:the_movie_data_base/screens/pages/movie_detail_page.dart';
 import 'package:the_movie_data_base/services/api.service.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 
+
 class TabHomeScreen extends StatefulWidget {
   const TabHomeScreen({super.key});
 
@@ -254,7 +255,7 @@ final List<dynamic> topContent = allRecentData;
           fontWeight: FontWeight.bold,
         ),
       ),
-      if (title != 'Cartelera') 
+      if (title == 'Estrenos' || title == 'Próximos Estrenos') 
         GestureDetector(
           onTap: () {
             if (title == 'Estrenos') {
@@ -269,7 +270,7 @@ final List<dynamic> topContent = allRecentData;
               );
             }
           },
-          child: Icon(Icons.more_horiz),
+          child: const Icon(Icons.more_horiz),
         ),
     ],
   ),
@@ -356,12 +357,12 @@ Widget build(BuildContext context) {
         length: 5,
         child: Scaffold(
           appBar: AppBar(
-        title: const Text('Henrito Movies'),
-        backgroundColor: Color.fromARGB(255, 184, 56, 47),
+        title: Image.asset('assets/logo.png', height: 30,),
+        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
         toolbarHeight: 35,
         actions: [
           IconButton(
-          icon: Icon(Icons.search),
+          icon: const Icon(Icons.search), color: Theme.of(context).iconTheme.color,
             onPressed: () {
             },
           ),
@@ -376,11 +377,13 @@ Widget build(BuildContext context) {
                 color: Color.fromARGB(255, 77, 80, 60), // Color de la línea gris
               ),
               Container(
-                color: const Color.fromARGB(255, 184, 56, 47),// Color del contenedor
+                color: Theme.of(context).appBarTheme.backgroundColor,// Color del contenedor
                 height: 35, // Altura del contenedor
                 child: TabBar(
-                  unselectedLabelColor: Colors.black,
-                  indicatorColor: const  Color.fromARGB(255, 19, 110, 185),
+                  dividerColor: const Color.fromARGB(255, 77, 80, 60),
+                  labelColor: Theme.of(context).primaryColor,
+                  unselectedLabelColor: Theme.of(context).iconTheme.color,
+                  indicatorColor: Theme.of(context).primaryColor,
                   isScrollable: true,
                   tabs: tabs,
                   labelPadding: const EdgeInsets.only(right: 45), // Ajusta el margen izquierdo

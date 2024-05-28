@@ -23,7 +23,7 @@ class _TabTicketScreenState extends State<TabTicketScreen> {
   String? _selectedTime;
   String? _selectedDate;
   List<String>? _selectedSeats;
-  final Map<String, Map<String, List<List<Seat>>>> _movieSeatMap = {};
+  final Map<String, Map<String, Map<String, List<List<Seat>>>>> _movieSeatMap = {};
   final ApiService apiService = ApiService();
   late List<dynamic> allRecentData = [];
   final List<dynamic> movieData = [];
@@ -54,15 +54,44 @@ class _TabTicketScreenState extends State<TabTicketScreen> {
 
   void _initializeSeats() {
     final times = ['10:00 AM', '1:00 PM', '4:00 PM', '6:00 PM', '7:00 PM'];
+    final dates = generateNextDates();
 
     for (var element in allRecentData) {
       String movieId = element['id'].toString();
       _movieSeatMap[movieId] = {};
 
-      for (var time in times) {
-        _movieSeatMap[movieId]![time] = _generateSeats(); // Generar los asientos para cada película y horario
+      for (var date in dates) {
+        String dateString = "${date['day']} ${date['month']}";
+        _movieSeatMap[movieId]![dateString] = {};
+
+        for (var time in times) {
+          _movieSeatMap[movieId]![dateString]![time] = _generateSeats(); // Generar los asientos para cada película, fecha y horario
+        }
       }
     }
+  }
+
+  String getMonthString(int month) {
+    const months = [
+      'Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'
+    ];
+    return months[month - 1];
+  }
+
+  List<Map<String, String>> generateNextDates() {
+    final now = DateTime.now();
+    List<Map<String, String>> dates = [];
+
+    for (int i = 0; i < 7; i++) {
+      DateTime date = now.add(Duration(days: i));
+      String month = getMonthString(date.month);
+      dates.add({
+        'day': date.day.toString(),
+        'month': month
+      });
+    }
+
+    return dates;
   }
 
   List<List<Seat>> _generateSeats() {
@@ -105,18 +134,18 @@ class _TabTicketScreenState extends State<TabTicketScreen> {
     return sections;
   }
 
-  List<List<Seat>> _getSeatsForSelectedMovieAndTime() {
+  List<List<Seat>> _getSeatsForSelectedMovieDateAndTime() {
     if (_selectedMovie == null || _selectedTime == null || _selectedDate == null) {
       return [];
     }
     final movieId = _selectedMovie['id'];
-    return _movieSeatMap[movieId.toString()]?[_selectedTime.toString()] ?? [];
+    return _movieSeatMap[movieId.toString()]?[_selectedDate.toString()]?[_selectedTime.toString()] ?? [];
   }
 
   void _onSeatSelected() {
     setState(() {
       if (_selectedMovie != null && _selectedDate != null && _selectedTime != null) {
-        _isSeatSelected = _getSeatsForSelectedMovieAndTime().any(
+        _isSeatSelected = _getSeatsForSelectedMovieDateAndTime().any(
           (section) => section.any((seat) => seat.isSelected),
         );
       } else {
@@ -139,7 +168,7 @@ class _TabTicketScreenState extends State<TabTicketScreen> {
 
     return Scaffold(
   appBar: AppBar(
-    backgroundColor: Colors.black38,
+    backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
     title: Center(
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
@@ -273,7 +302,7 @@ class _TabTicketScreenState extends State<TabTicketScreen> {
   }
 
   Widget _buildSeatSelection() {
-    final seats = _getSeatsForSelectedMovieAndTime();
+    final seats = _getSeatsForSelectedMovieDateAndTime();
     if (seats.isEmpty) {
       return Center(
         child: Text(
