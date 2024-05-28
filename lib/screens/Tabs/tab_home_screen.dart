@@ -356,7 +356,10 @@ Widget build(BuildContext context) {
         length: 5,
         child: Scaffold(
           appBar: AppBar(
-        title: const Text('Henrito Movies'),
+          title: Image.asset(
+              'assets/palomitaLente.png',
+              height: 35, 
+            ),
         backgroundColor: Color.fromARGB(255, 184, 56, 47),
         toolbarHeight: 35,
         actions: [
