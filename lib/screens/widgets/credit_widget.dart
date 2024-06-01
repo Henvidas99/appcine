@@ -40,7 +40,7 @@ class _CreditsWidgetState extends State<CreditsWidget> {
             children: [
               if (director != null) ...[
                 Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  padding: const EdgeInsets.only(bottom: 4.0),
                   child: Text(
                     'Director: $director',
                     style: const TextStyle(fontWeight: FontWeight.bold),

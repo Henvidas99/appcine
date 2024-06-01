@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../services/authentication.service.dart'; // Importa tu servicio de autenticación
+import '../../services/authentication.service.dart'; 
 import '../dashboard/dashboard_screen.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/services.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -54,7 +53,6 @@ class _LoginScreenState extends State<LoginScreen> {
       await AuthenticationService().login(username, password);
 
       Navigator.pushReplacement(
-        // ignore: use_build_context_synchronously
         context,
         MaterialPageRoute(builder: (context) => const LoadContent()),
       );
@@ -80,14 +78,12 @@ class _LoginScreenState extends State<LoginScreen> {
           duration: const Duration(seconds: 2),
           behavior: SnackBarBehavior.floating,
         );
-        // ignore: use_build_context_synchronously
         ScaffoldMessenger.of(context).showSnackBar(snackBar2);
       } else {
         final snackBar = SnackBar(
           content: Text(error.toString()),
           duration: const Duration(seconds: 2),
         );
-        // ignore: use_build_context_synchronously
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
       }
     }
@@ -168,31 +164,26 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
                 const SizedBox(height: 16.0),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color.fromARGB(255, 255, 52, 52),
-                    padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 42),
-                    disabledBackgroundColor: const Color.fromARGB(255, 234, 115, 115),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFFE50914),
+                      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 42),
+                      disabledBackgroundColor: const Color.fromARGB(255, 234, 115, 115),
+                    ),
+                    onPressed: _isButtonEnabled ? () => _login(context) : null, 
+                    child: _isLoading
+                        ? const SizedBox(
+                            width: 20.0,
+                            height: 20.0,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2.0,
+                              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                            ),
+                          )
+                        : const Text('Iniciar sesión', style: TextStyle(color: Colors.white)),
                   ),
-                  onPressed: _isButtonEnabled ? () => _login(context) : null, 
-                  child: _isLoading
-                      ? const SizedBox(
-                          width: 20.0,
-                          height: 20.0,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2.0,
-                            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                          ),
-                        )
-                      : const Text('Iniciar sesión', style: TextStyle(color: Colors.white)),
-                ),
-                const SizedBox(height: 8.0),
-                TextButton(
-                  onPressed: () {
-                     const url = 'https://www.themoviedb.org/signup?language=es'; 
-                     launchUrl(Uri.parse(url));
-                  },
-                  child: const Text('Registrarse', style: TextStyle(color: Colors.white)),
                 ),
               ],
             ),

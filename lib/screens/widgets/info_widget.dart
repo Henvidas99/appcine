@@ -24,7 +24,7 @@ class _MovieInfoWidgetState extends State<MovieInfoWidget> {
     children: [
       // Display the movie overview
       const Padding(
-        padding: EdgeInsets.only(bottom: 8.0, top: 5.0),
+        padding: EdgeInsets.only(bottom: 8.0),
         child: Text(
           'Descripción:',
           style: TextStyle(
@@ -97,7 +97,7 @@ Widget _buildOverview() {
         )
       else
         const Padding(
-          padding: EdgeInsets.only(top: 25.0), // Ajusta el valor del padding según sea necesario
+          padding: EdgeInsets.only(top: 15.0), // Ajusta el valor del padding según sea necesario
         ),
     ],
   );

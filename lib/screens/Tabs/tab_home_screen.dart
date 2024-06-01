@@ -17,7 +17,9 @@ class _TabHomeScreenState extends State<TabHomeScreen> {
   List<dynamic> _recentMoviesData = [];
   List<dynamic> _nowPlayingData = [];
   List<dynamic> _upcomingData = [];
-  List<dynamic> trendingItems = [];
+  List<dynamic> trendingData = [];
+  List<dynamic> _topRatedData = [];
+  List<dynamic> _popularData = [];
   Map<int, String> _genres = {};
 
   final ApiService apiService = ApiService();
@@ -36,6 +38,9 @@ class _TabHomeScreenState extends State<TabHomeScreen> {
       await _fetchTrending();
       await _fetchActualMovies();
       await _fetchUpcomingMovies();
+      await _fetchTopRatedMovies();
+      await _fetchPopularMovies();
+
       if (mounted) {
         setState(() {
           _isLoading = false; // Cambia el estado a false una vez que se hayan cargado los datos
@@ -115,11 +120,41 @@ Future<void> _fetchTrending() async {
     
     if (mounted) {
       setState(() {
-        trendingItems = data;
+        trendingData = data;
       });
     }
   } catch (e) {
     print('Error fetching trending items: $e');
+    // Manejar el error según sea necesario
+  }
+}
+
+Future<void> _fetchTopRatedMovies() async {
+  try {
+    final data = await apiService.fetchTopRatedMovies();
+    
+    if (mounted) {
+      setState(() {
+        _topRatedData = data;
+      });
+    }
+  } catch (e) {
+    print('Error fetching TopRated Movies items: $e');
+    // Manejar el error según sea necesario
+  }
+}
+
+Future<void> _fetchPopularMovies() async {
+  try {
+    final data = await apiService.fetchPopularMovies();
+    
+    if (mounted) {
+      setState(() {
+        _popularData = data;
+      });
+    }
+  } catch (e) {
+    print('Error fetching popular Movies items: $e');
     // Manejar el error según sea necesario
   }
 }
@@ -135,19 +170,39 @@ List<Widget> _buildExploreSections() {
   trendingSections.add(_buildMoviesCarousel());
   
   trendingSections.add(_buildSectionHeader(title[1]));
-  trendingSections.add(_buildItemList(premiereData));
+  trendingSections.add(_buildItemList(premiereData, title[1]));
   trendingSections.add(const SizedBox(height: 20));
 
   trendingSections.add(_buildSectionHeader(title[2]));
-  trendingSections.add(_buildItemList(upcomingData));
+  trendingSections.add(_buildItemList(upcomingData, ""));
   trendingSections.add(const SizedBox(height: 20));
 
     return trendingSections;
 }
 
+List<Widget> _buildCategorySections() {
+  List<Widget> categorySections = [];
+
+  List<dynamic> popularData = _popularData;
+  List<dynamic> topRatedData = _topRatedData;
+ 
+  
+  List<String> title = ["Populares","Mejor Calificadas"];
+  
+  categorySections.add(_buildSectionHeader(title[0]));
+  categorySections.add(_buildItemList(popularData, ""));
+  categorySections.add(const SizedBox(height: 20));
+
+  categorySections.add(_buildSectionHeader(title[1]));
+  categorySections.add(_buildItemList(topRatedData, ""));
+  categorySections.add(const SizedBox(height: 20));
+
+    return categorySections;
+  }
 
 
-  List<Widget> _buildMoviesSections() {
+
+  List<Widget> _buildGenreSections() {
     List<Widget> sections = [];
 
     List<dynamic> moviesData = [..._recentMoviesData];
@@ -164,7 +219,7 @@ List<Widget> _buildExploreSections() {
 
     dataByGenre.forEach((genre, data) {
       sections.add(_buildSectionHeader(genre));
-      sections.add(_buildItemList(data));
+      sections.add(_buildItemList(data, ""));
       sections.add(const SizedBox(height: 20));
     });
 
@@ -197,6 +252,14 @@ final List<dynamic> topContent = allRecentData;
       enlargeCenterPage: true,
     ),
     items: topContent.map<Widget>((item) {
+
+      List<String> movieGenres = [];
+      List<int> genreIds = List<int>.from(item['genre_ids']);
+      for (var genreId in genreIds) {
+        String genreName = _genres[genreId] ?? 'Otros';
+        movieGenres.add(genreName);
+     }
+
       final backdropPath = item['backdrop_path'];
       String imageUrl = backdropPath != null
           ? 'https://image.tmdb.org/t/p/w500$backdropPath'
@@ -206,7 +269,7 @@ final List<dynamic> topContent = allRecentData;
           return GestureDetector(
             onTap: () {  Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => MovieDetailPage(movie:item)),
+                MaterialPageRoute(builder: (context) => MovieDetailPage(movie:item, showButton: true, genreList: movieGenres,)),
               );
             },
             child: Container(
@@ -255,18 +318,30 @@ final List<dynamic> topContent = allRecentData;
           fontWeight: FontWeight.bold,
         ),
       ),
-      if (title == 'Estrenos' || title == 'Próximos Estrenos') 
+      if (title == 'Estrenos' || title == 'Próximos Estrenos' || title == 'Populares' || title == 'Mejor Calificadas') 
         GestureDetector(
           onTap: () {
             if (title == 'Estrenos') {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => FullMovieListPage(title: title, movieList: _recentMoviesData)), // Suponiendo que "upcomingMovies" es tu lista de próximos estrenos
+                MaterialPageRoute(builder: (context) => FullMovieListPage(title: title, movieList: _recentMoviesData, genres: _genres, )), // Suponiendo que "upcomingMovies" es tu lista de próximos estrenos
               );
             } else if (title == 'Próximos Estrenos') {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => FullMovieListPage(title: title, movieList: _upcomingData)), // Suponiendo que "upcomingMovies" es tu lista de próximos estrenos
+                MaterialPageRoute(builder: (context) => FullMovieListPage(title: title, movieList: _upcomingData, genres: _genres)), // Suponiendo que "upcomingMovies" es tu lista de próximos estrenos
+              );
+            }
+            else if (title == 'Populares') {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => FullMovieListPage(title: title, movieList: _popularData, genres: _genres)), // Suponiendo que "upcomingMovies" es tu lista de próximos estrenos
+              );
+            }
+            else if (title == 'Mejor Calificadas') {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => FullMovieListPage(title: title, movieList: _topRatedData, genres: _genres)), // Suponiendo que "upcomingMovies" es tu lista de próximos estrenos
               );
             }
           },
@@ -278,7 +353,8 @@ final List<dynamic> topContent = allRecentData;
 
 }
 
-  Widget _buildItemList(List<dynamic> dataList) {
+  Widget _buildItemList(List<dynamic> dataList, String title) {
+
   return Padding(
   padding: const EdgeInsets.only(left: 6.0,),
    child: SizedBox(
@@ -286,6 +362,14 @@ final List<dynamic> topContent = allRecentData;
     child: ListView(
       scrollDirection: Axis.horizontal,
     children: dataList.take(5).map<Widget>((item) {
+
+      List<String> movieGenres = [];
+      List<int> genreIds = List<int>.from(item['genre_ids']);
+      for (var genreId in genreIds) {
+        String genreName = _genres[genreId] ?? 'Otros';
+        movieGenres.add(genreName);
+     }
+
       final backdropPath = item['backdrop_path'];
       String imageUrl = backdropPath != null
           ? 'https://image.tmdb.org/t/p/w500$backdropPath'
@@ -295,7 +379,7 @@ final List<dynamic> topContent = allRecentData;
         child: GestureDetector(
           onTap: () {  Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => MovieDetailPage(movie:item)),
+                MaterialPageRoute(builder: (context) => MovieDetailPage(movie:item, genreList: movieGenres, showButton: title == 'Estrenos' ? true : false)),
               );
             },
           child: Column(
@@ -341,10 +425,8 @@ final List<dynamic> topContent = allRecentData;
 
 List<Tab> tabs = [
   const Tab(child: Text("Explora")),
-  const Tab(child: Text("Películas")),
-  const Tab(child: Text("Acción")),
-  const Tab(child: Text("Animación")),
-  const Tab(child: Text("Terror")),
+  const Tab(child: Text("Categorías")),
+  const Tab(child: Text("Géneros")),
 ];
 
 @override
@@ -354,7 +436,7 @@ Widget build(BuildContext context) {
           child: CircularProgressIndicator(), // Muestra un indicador de carga mientras se cargan los datos
         )
       : DefaultTabController(
-        length: 5,
+        length: 3,
         child: Scaffold(
           appBar: AppBar(
         title: Image.asset('assets/logo.png', height: 30,),
@@ -395,8 +477,6 @@ Widget build(BuildContext context) {
                     buildContent(context, 0), // Contenido de la pestaña 1
                     buildContent(context, 1), // Contenido de la pestaña 2
                     buildContent(context, 2), // Contenido de la pestaña 3
-                    buildContent(context, 3), // Contenido de la pestaña 4
-                    buildContent(context, 4), // Contenido de la pestaña 5
                   ],
                 ),
               ),
@@ -426,23 +506,16 @@ Widget buildContent(BuildContext context, int tabIndex) {
          padding: EdgeInsets.only(top: 20.0),
          child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: _buildMoviesSections(),// Este es el contenido de la pestaña 1
+          children: _buildCategorySections(),// Este es el contenido de la pestaña 1
         ),
       );
     case 2:
        return SingleChildScrollView(
+        padding: EdgeInsets.only(top: 20.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: _buildMoviesSections(),// Este es el contenido de la pestaña 1
+          children: _buildGenreSections(),// Este es el contenido de la pestaña 1
         ),
-      );
-    case 3:
-      return Container(
-        // Contenido de la pestaña 4
-      );
-    case 4:
-      return Container(
-        // Contenido de la pestaña 5
       );
     default:
       return Container();

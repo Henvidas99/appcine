@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:the_movie_data_base/screens/pages/movie_detail_page.dart';
 
 class FullMovieListPage extends StatelessWidget {
   final String title;
   final List<dynamic> movieList;
+  final Map<int, String> genres;
 
-  const FullMovieListPage({super.key, required this.title, required this.movieList});
+  const FullMovieListPage({super.key, required this.title, required this.movieList, required this.genres});
 
   @override
 Widget build(BuildContext context) {
+  
   return Scaffold(
     appBar: AppBar(
        title: Text(title), centerTitle: true,
@@ -17,6 +20,14 @@ Widget build(BuildContext context) {
         mainAxisSpacing: 2.0, // Espacio entre las filas
         childAspectRatio: 0.7, // Relación de aspecto de cada elemento en la cuadrícula
         children: movieList.map<Widget>((item) {
+          
+            List<String> movieGenres = [];
+            List<int> genreIds = List<int>.from(item['genre_ids']);
+            for (var genreId in genreIds) {
+            String genreName = genres[genreId] ?? 'Otros';
+            movieGenres.add(genreName);
+          }
+
           final backdropPath = item['backdrop_path'];
           String imageUrl = backdropPath != null
               ? 'https://image.tmdb.org/t/p/w500$backdropPath'
@@ -24,7 +35,11 @@ Widget build(BuildContext context) {
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: 1.0, vertical: 4.0), // Padding interno para cada elemento
             child: GestureDetector(
-              onTap: () => null, // _showMovieDetails(context, item),
+              onTap: () {  Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => MovieDetailPage(movie:item, showButton: title == 'Estrenos' ? true : false, genreList: movieGenres,)),
+              );
+            },
               child: Container(
             margin: const EdgeInsets.symmetric(horizontal: 5.0),
             decoration: BoxDecoration(

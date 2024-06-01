@@ -220,6 +220,7 @@ class _TabTicketScreenState extends State<TabTicketScreen> {
                           Expanded(
                             child: _buildSeatSelection(),
                           ),
+                          if(_selectedDate != null && _selectedTime != null)
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 16.0),
                             child: Row(

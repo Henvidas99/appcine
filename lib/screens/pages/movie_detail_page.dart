@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:the_movie_data_base/screens/Tabs/tab_ticket_screen.dart';
 import 'package:the_movie_data_base/screens/widgets/credit_widget.dart';
+import 'package:the_movie_data_base/screens/widgets/genre_list_widget.dart';
 import 'package:the_movie_data_base/screens/widgets/info_widget.dart';
 import 'package:the_movie_data_base/screens/widgets/trailer_widget.dart'; 
 
 class MovieDetailPage extends StatefulWidget {
   final dynamic movie;
+  final bool showButton;
+  final List<String> genreList;
 
-  const MovieDetailPage({super.key, required this.movie});
+  const MovieDetailPage({super.key, required this.movie, this.showButton =false, required this.genreList});
 
   @override
   // ignore: library_private_types_in_public_api
@@ -49,6 +52,8 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
 
   @override
   Widget build(BuildContext context) {
+    print(widget.genreList);
+
     return Scaffold(
       body: FutureBuilder(
         future: _loadMovieDetails(),
@@ -70,14 +75,19 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
+                         Padding(
+                          padding:  EdgeInsets.all(10.0),
+                          child: GenreList(chipContents: widget.genreList),
+                        ),
                         Padding(
                           padding: const EdgeInsets.all(10.0),
                           child: snapshot.data![1], // Movie information
                         ),
                         Padding(
-                          padding: const EdgeInsets.all(10.0),
+                          padding: const EdgeInsets.symmetric(horizontal: 10.0),
                           child: snapshot.data![2], // Movie cast
                         ),
+                        if(widget.showButton == true)
                         Padding(
                           padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
                           child: ElevatedButton(

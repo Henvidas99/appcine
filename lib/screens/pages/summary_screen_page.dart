@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import 'package:the_movie_data_base/screens/pages/success_screen_page.dart';
 
 class SummaryScreen extends StatelessWidget {
   final dynamic selectedMovie;
@@ -282,7 +283,7 @@ class TicketsSummaryBox extends StatelessWidget {
                         Expanded(
                           child: Column(
                             children: [
-                              Center(child: Text('Fecha', style: TextStyle(color: Colors.grey, fontSize: 16))),
+                              const Center(child: Text('Fecha', style: TextStyle(color: Colors.grey, fontSize: 16))),
                               Text(selectedDate, style: TextStyle(color: Colors.black)),
                             ],
                           ),
@@ -291,7 +292,7 @@ class TicketsSummaryBox extends StatelessWidget {
                           child: Column(
                             children: [
                               Text('TICKETES', style: TextStyle(color: Colors.grey, fontSize: 16)),
-                              Text('${selectedSeats.length}', style: TextStyle(color: Colors.black)),
+                              Text('${selectedSeats.length}', style: const TextStyle(color: Colors.black)),
                             ],
                           ),
                         ),
@@ -304,26 +305,32 @@ class TicketsSummaryBox extends StatelessWidget {
                       Expanded(
                         child: Column(
                           children: [
-                            Center(child: const Text('HORA', style: TextStyle(color: Colors.grey, fontSize: 16))),
+                            const Center(child: Text('HORA', style: TextStyle(color: Colors.grey, fontSize: 16))),
                             Text(selectedTime, style: TextStyle(color: Colors.black)),
                           ],
                         ),
                       ),
                       Expanded(
-                        child: Column(
-                          children: [
-                            const Text('ASIENTOS', style: TextStyle(color: Colors.grey, fontSize: 16)),
-                            Wrap(
-                              children: List.generate(selectedSeats.length, (i) {
-                                final isLastSeat = i == selectedSeats.length - 1;
-                                return Text(
-                                  isLastSeat ? '${selectedSeats[i]}' : '${selectedSeats[i]}, ',
-                                  style: TextStyle(color: Colors.black),
-                                );
-                              }),
-                            ),
-                          ]
+                       child: Column(
+                        children: [
+                        const Text(
+                          'ASIENTOS', 
+                          style: TextStyle(color: Colors.grey, fontSize: 16)
+                          ),
+                        Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                          child: Text(
+                            selectedSeats.join(', '), // Unir todos los asientos en una sola cadena con comas
+                            style: const TextStyle(
+                            color: Color.fromARGB(255, 15, 13, 13)
+                          ),
+                          overflow: TextOverflow.ellipsis, // Agregar puntos suspensivos si el texto es demasiado largo
+                          maxLines: 1, // Limitar a una sola línea
+                          softWrap: false, // No permitir el ajuste automático de líneas
+                          ),
                         ),
+                      ],
+                      )
                       ),
                     ],
                   ),
@@ -335,7 +342,7 @@ class TicketsSummaryBox extends StatelessWidget {
                   const SizedBox(height: 5.0),
                   Center(
                     child: QrImageView(
-                      data: 'Película: ${selectedMovie['title']}, Fecha: $selectedDate, Hora: $selectedTime, ',
+                      data: 'Película: ${selectedMovie['title']}, Fecha: $selectedDate, Hora: $selectedTime, Asientos: $selectedSeats ',
                       version: QrVersions.auto,
                       size: 120.0,
                       gapless: false,
@@ -357,8 +364,10 @@ class ConfirmBookingsButton extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(30, 20, 30, 0),
       child: ElevatedButton(
         onPressed: () {
-          
-        },
+        Navigator.of(context).push(
+        MaterialPageRoute(builder: (context) => SuccessScreen()),
+        );
+      },
          style: ElevatedButton.styleFrom(
                   fixedSize: const Size.fromHeight(50),            
                   backgroundColor: const Color(0xFFE50914),

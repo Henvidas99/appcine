@@ -44,6 +44,18 @@ class ApiService {
     }
   }
 
+  Future<List<dynamic>> fetchTopRatedMovies() async {
+    const url = '$baseUrl/movie/top_rated?api_key=$apiKey';
+    final response = await http.get(Uri.parse(url));
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body)['results'];
+      return data;
+    } else {
+      throw Exception('Failed to load top rated movies');
+    }
+  }
+
 
   Future<List<dynamic>> fetchTrending() async {
     const timeWindow = 'week';
