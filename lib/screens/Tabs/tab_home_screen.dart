@@ -322,8 +322,11 @@ Widget build(BuildContext context) {
         length: 3,
         child: Scaffold(
           appBar: AppBar(
-        title: Image.asset('assets/logo.png', height: 30,),
-        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
+          title: Image.asset(
+              'assets/palomitaLente.png',
+              height: 35, 
+            ),
+        backgroundColor: Color.fromARGB(255, 184, 56, 47),
         toolbarHeight: 35,
         actions: [
           IconButton(
