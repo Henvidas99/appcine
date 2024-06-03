@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../../services/authentication.service.dart'; 
-import '../dashboard/dashboard_screen.dart';
 import 'package:flutter/services.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _LoginScreenState createState() => _LoginScreenState();
 }
 
@@ -52,10 +53,8 @@ class _LoginScreenState extends State<LoginScreen> {
     try {
       await AuthenticationService().login(username, password);
 
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const LoadContent()),
-      );
+      // ignore: use_build_context_synchronously
+      context.go('/');
     } catch (error) {
       setState(() {
         _isLoading = false;
@@ -78,12 +77,14 @@ class _LoginScreenState extends State<LoginScreen> {
           duration: const Duration(seconds: 2),
           behavior: SnackBarBehavior.floating,
         );
+        // ignore: use_build_context_synchronously
         ScaffoldMessenger.of(context).showSnackBar(snackBar2);
       } else {
         final snackBar = SnackBar(
           content: Text(error.toString()),
           duration: const Duration(seconds: 2),
         );
+        // ignore: use_build_context_synchronously
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
       }
     }

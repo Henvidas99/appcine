@@ -6,15 +6,16 @@ import 'package:flutter/services.dart';
 class TrailerWidget extends StatefulWidget {
   final dynamic movie;
 
-  const TrailerWidget({Key? key, required this.movie}) : super(key: key);
+  const TrailerWidget({super.key, required this.movie});
 
   @override
+  // ignore: library_private_types_in_public_api
   _TrailerWidgetState createState() => _TrailerWidgetState();
 }
 
-class _TrailerWidgetState extends State<TrailerWidget> {
-  late YoutubePlayerController _controller;
-  late String _videoKey = "";
+class _TrailerWidgetState extends State<TrailerWidget> with SingleTickerProviderStateMixin {
+  YoutubePlayerController? _controller;
+  String _videoKey = "";
   bool _isControllerInitialized = false;
   bool _isVideoEnded = false;
 
@@ -28,41 +29,53 @@ class _TrailerWidgetState extends State<TrailerWidget> {
     try {
       final String? videoKey = await _getTrailerKey(widget.movie);
       if (videoKey != null) {
-        setState(() {
-          _videoKey = videoKey;
-          _controller = YoutubePlayerController(
-            initialVideoId: _videoKey,
-            flags: const YoutubePlayerFlags(
-              enableCaption: true,
-              autoPlay: false,
-              mute: false,
-              forceHD: true,
-            ),
-          )..addListener(_videoListener);
-          _isControllerInitialized = true;
-        });
+        if (mounted) {
+          setState(() {
+            _videoKey = videoKey;
+            _controller = YoutubePlayerController(
+              initialVideoId: _videoKey,
+              flags: const YoutubePlayerFlags(
+                enableCaption: true,
+                autoPlay: false,
+                mute: false,
+                forceHD: true,
+              ),
+            )..addListener(_videoListener);
+            _isControllerInitialized = true;
+          });
+        }
       } else {
-        print('Error: Trailer key is null');
+       // print('Error: Trailer key is null');
+        if (mounted) {
+          setState(() {
+            _isControllerInitialized = true;
+          });
+        }
+      }
+    } catch (e) {
+      //print('Error fetching trailer key: $e');
+      // Handle error
+      if (mounted) {
         setState(() {
-          _controller = YoutubePlayerController(initialVideoId: '');
           _isControllerInitialized = true;
         });
       }
-    } catch (e) {
-      print('Error fetching trailer key: $e');
-      // Handle error
     }
   }
 
   void _videoListener() {
-    if (_controller.value.playerState == PlayerState.ended) {
-      setState(() {
-        _isVideoEnded = true;
-      });
-    } else if (_controller.value.playerState == PlayerState.playing) {
-      setState(() {
-        _isVideoEnded = false;
-      });
+    if (_controller != null && _controller!.value.playerState == PlayerState.ended) {
+      if (mounted) {
+        setState(() {
+          _isVideoEnded = true;
+        });
+      }
+    } else if (_controller != null && _controller!.value.playerState == PlayerState.playing) {
+      if (mounted) {
+        setState(() {
+          _isVideoEnded = false;
+        });
+      }
     }
   }
 
@@ -82,7 +95,7 @@ class _TrailerWidgetState extends State<TrailerWidget> {
                 ),
                 controlsTimeOut: const Duration(milliseconds: 1500),
                 aspectRatio: 16 / 9,
-                controller: _controller,
+                controller: _controller!,
                 showVideoProgressIndicator: true,
                 bufferIndicator: Container(
                   color: Colors.black,
@@ -106,10 +119,10 @@ class _TrailerWidgetState extends State<TrailerWidget> {
                   RemainingDuration(),
                   if (_isVideoEnded)
                     IconButton(
-                      icon: Icon(Icons.replay),
+                      icon: const Icon(Icons.replay),
                       onPressed: () {
-                        _controller.seekTo(Duration.zero);
-                        _controller.play();
+                        _controller!.seekTo(Duration.zero);
+                        _controller!.play();
                       },
                     )
                   else
@@ -137,7 +150,7 @@ class _TrailerWidgetState extends State<TrailerWidget> {
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
     ]);
-    _controller.dispose();
+    _controller?.dispose();
     super.dispose();
   }
 }

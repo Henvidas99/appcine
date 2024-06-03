@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:the_movie_data_base/styles/theme_data.dart';
 import '../Tabs/tab_home_screen.dart';
 import '../Tabs/tab_ticket_screen.dart';
 import '../Tabs/tab_account_screen.dart';
+import 'package:provider/provider.dart';
+import 'package:the_movie_data_base/provider/seat_selection_provider.dart';
 
 void main() {
-  runApp(const Dashboard());
+  runApp(const WelcomeScreen());
 }
 
-class Dashboard extends StatelessWidget {
-  const Dashboard({super.key});
+class WelcomeScreen extends StatelessWidget {
+  const WelcomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: appTheme(),
-      home: const LoadContent(),
+    return const Scaffold(
+      body: LoadContent(),
     );
   }
 }
@@ -35,26 +35,14 @@ class _LoadContentState extends State<LoadContent> {
     setState(() {
       _selectedIndex = index;
     });
+    if (index == 1) {
+      Provider.of<SeatSelectionProvider>(context, listen: false).clearSelectedSeats();
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-/*
-      appBar: AppBar(
-        title: const Text('Henrito Movies'),
-        backgroundColor: Theme.of(context).primaryColor,
-        toolbarHeight: 35,
-        actions: [
-          IconButton(
-          icon: Icon(Icons.search),
-            onPressed: () {
-            },
-          ),
-        ], 
-      ),
-*/
-      
       body: _buildPage(_selectedIndex),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
@@ -82,12 +70,12 @@ class _LoadContentState extends State<LoadContent> {
 
   Widget _buildPage(int index) {
     switch (index) {
-      case 0:
-        return const TabHomeScreen(); // Cargar pantalla de inicio
+      case 0:      
+        return const TabHomeScreen(); 
       case 1:
-        return const TabTicketScreen(); // Cargar pantalla de búsqueda
+        return const TabTicketScreen(); 
       case 2:
-        return const TabAccountScreen(); // Cargar pantalla de perfil
+        return const TabAccountScreen(); 
       default:
         return Container();
     }

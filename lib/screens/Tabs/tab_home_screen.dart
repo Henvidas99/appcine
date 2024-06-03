@@ -3,6 +3,8 @@ import 'package:the_movie_data_base/screens/pages/full_movie_list_page.dart';
 import 'package:the_movie_data_base/screens/pages/movie_detail_page.dart';
 import 'package:the_movie_data_base/services/api.service.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:provider/provider.dart';
+import 'package:the_movie_data_base/provider/movies_provider.dart';
 
 
 class TabHomeScreen extends StatefulWidget {
@@ -14,16 +16,8 @@ class TabHomeScreen extends StatefulWidget {
 }
 
 class _TabHomeScreenState extends State<TabHomeScreen> {
-  List<dynamic> _recentMoviesData = [];
-  List<dynamic> _nowPlayingData = [];
-  List<dynamic> _upcomingData = [];
-  List<dynamic> trendingData = [];
-  List<dynamic> _topRatedData = [];
-  List<dynamic> _popularData = [];
-  Map<int, String> _genres = {};
-
   final ApiService apiService = ApiService();
-  bool _isLoading = true; // Para controlar si se están cargando los datos
+  bool _isLoading = true; 
 
   @override
   void initState() {
@@ -33,168 +27,57 @@ class _TabHomeScreenState extends State<TabHomeScreen> {
 
   Future<void> _fetchData() async {
     try {
-      await _fetchRecentData();
-      await _fetchGenres();
-      await _fetchTrending();
-      await _fetchActualMovies();
-      await _fetchUpcomingMovies();
-      await _fetchTopRatedMovies();
-      await _fetchPopularMovies();
-
       if (mounted) {
         setState(() {
-          _isLoading = false; // Cambia el estado a false una vez que se hayan cargado los datos
+          _isLoading = false; 
         });
       }
     } catch (e) {
-      // Manejar errores
       if (mounted) {
         setState(() {
-          _isLoading = false; // Asegúrate de cambiar el estado incluso en caso de error
+          _isLoading = false; 
         });
       }
-      print('Error: $e');
     }
   }
 
-  Future<void> _fetchRecentData() async {
-     try {
-      final movieData = await apiService.fetchPopularMovies();
-    if (mounted) {
-      setState(() {
-         _recentMoviesData = movieData;
-      });
-    }
-  } catch (e) {
-    print('Error fetching recent data: $e');
-    // Manejar el error según sea necesario
-  }
-}
 
-Future<void> _fetchActualMovies() async {
-     try {
-      final movieData = await apiService.fetchActualMovies();
-    if (mounted) {
-      setState(() {
-         _nowPlayingData = movieData;
-      });
-    }
-  } catch (e) {
-    print('Error fetching recent data: $e');
-    // Manejar el error según sea necesario
-  }
-}
-
-Future<void> _fetchUpcomingMovies() async {
-     try {
-      final movieData = await apiService.fetchUpcomingMovies();
-    if (mounted) {
-      setState(() {
-         _upcomingData = movieData;
-      });
-    }
-  } catch (e) {
-    print('Error fetching recent data: $e');
-    // Manejar el error según sea necesario
-  }
-}
-
-  Future<void> _fetchGenres() async {
-  try {
-    final Map<int, String> genres = await apiService.fetchGenres();
-    if (mounted) {
-      setState(() {
-        _genres = genres;
-      });
-    }
-  } catch (e) {
-    print('Error fetching genre items: $e');
-    // Manejar el error según sea necesario
-  }
-}
-
-
-Future<void> _fetchTrending() async {
-  try {
-    final data = await apiService.fetchTrending();
-    
-    if (mounted) {
-      setState(() {
-        trendingData = data;
-      });
-    }
-  } catch (e) {
-    print('Error fetching trending items: $e');
-    // Manejar el error según sea necesario
-  }
-}
-
-Future<void> _fetchTopRatedMovies() async {
-  try {
-    final data = await apiService.fetchTopRatedMovies();
-    
-    if (mounted) {
-      setState(() {
-        _topRatedData = data;
-      });
-    }
-  } catch (e) {
-    print('Error fetching TopRated Movies items: $e');
-    // Manejar el error según sea necesario
-  }
-}
-
-Future<void> _fetchPopularMovies() async {
-  try {
-    final data = await apiService.fetchPopularMovies();
-    
-    if (mounted) {
-      setState(() {
-        _popularData = data;
-      });
-    }
-  } catch (e) {
-    print('Error fetching popular Movies items: $e');
-    // Manejar el error según sea necesario
-  }
-}
-
-List<Widget> _buildExploreSections() {
+List<Widget> _buildExploreSections(MoviesProvider moviesProvider) {
   List<Widget> trendingSections = []; 
-  List<dynamic> premiereData = _recentMoviesData;
-  List<dynamic> upcomingData = _upcomingData;
+  List<dynamic> premiereData = moviesProvider.recentMoviesData;
+  List<dynamic> upcomingData = moviesProvider.upcomingData;
  
   
   List<String> title = ["Cartelera","Estrenos", "Próximos Estrenos"];
-  trendingSections.add(_buildSectionHeader(title[0]));
-  trendingSections.add(_buildMoviesCarousel());
+  trendingSections.add(_buildSectionHeader(moviesProvider, title[0]));
+  trendingSections.add(_buildMoviesCarousel(moviesProvider));
   
-  trendingSections.add(_buildSectionHeader(title[1]));
-  trendingSections.add(_buildItemList(premiereData, title[1]));
+  trendingSections.add(_buildSectionHeader(moviesProvider, title[1]));
+  trendingSections.add(_buildItemList(moviesProvider, premiereData, title[1]));
   trendingSections.add(const SizedBox(height: 20));
 
-  trendingSections.add(_buildSectionHeader(title[2]));
-  trendingSections.add(_buildItemList(upcomingData, ""));
+  trendingSections.add(_buildSectionHeader(moviesProvider, title[2]));
+  trendingSections.add(_buildItemList(moviesProvider,upcomingData, ""));
   trendingSections.add(const SizedBox(height: 20));
 
     return trendingSections;
 }
 
-List<Widget> _buildCategorySections() {
+List<Widget> _buildCategorySections(MoviesProvider moviesProvider) {
   List<Widget> categorySections = [];
 
-  List<dynamic> popularData = _popularData;
-  List<dynamic> topRatedData = _topRatedData;
+  List<dynamic> popularData = moviesProvider.popularData;
+  List<dynamic> topRatedData = moviesProvider.topRatedData;
  
   
   List<String> title = ["Populares","Mejor Calificadas"];
   
-  categorySections.add(_buildSectionHeader(title[0]));
-  categorySections.add(_buildItemList(popularData, ""));
+  categorySections.add(_buildSectionHeader(moviesProvider, title[0]));
+  categorySections.add(_buildItemList(moviesProvider, popularData, ""));
   categorySections.add(const SizedBox(height: 20));
 
-  categorySections.add(_buildSectionHeader(title[1]));
-  categorySections.add(_buildItemList(topRatedData, ""));
+  categorySections.add(_buildSectionHeader(moviesProvider, title[1]));
+  categorySections.add(_buildItemList(moviesProvider, topRatedData, ""));
   categorySections.add(const SizedBox(height: 20));
 
     return categorySections;
@@ -202,24 +85,24 @@ List<Widget> _buildCategorySections() {
 
 
 
-  List<Widget> _buildGenreSections() {
+  List<Widget> _buildGenreSections(MoviesProvider moviesProvider) {
     List<Widget> sections = [];
 
-    List<dynamic> moviesData = [..._recentMoviesData];
+    List<dynamic> moviesData = [...moviesProvider.recentMoviesData];
 
     Map<String, List<dynamic>> dataByGenre = {};
     for (var item in moviesData) {
       List<int> genreIds = List<int>.from(item['genre_ids']);
       for (var genreId in genreIds) {
-        String genreName = _genres[genreId] ?? 'Otros';
+        String genreName = moviesProvider.genres[genreId] ?? 'Otros';
         dataByGenre.putIfAbsent(genreName, () => []);
         dataByGenre[genreName]!.add(item);
       }
     }
 
     dataByGenre.forEach((genre, data) {
-      sections.add(_buildSectionHeader(genre));
-      sections.add(_buildItemList(data, ""));
+      sections.add(_buildSectionHeader(moviesProvider, genre));
+      sections.add(_buildItemList(moviesProvider, data, ""));
       sections.add(const SizedBox(height: 20));
     });
 
@@ -227,12 +110,12 @@ List<Widget> _buildCategorySections() {
   }
 
 
-  Widget _buildMoviesCarousel() {
+  Widget _buildMoviesCarousel(MoviesProvider moviesProvider) {
     final List<dynamic> allRecentData = [];
 
 
-for (int i = 0; i < _recentMoviesData.length; i++) {
-    allRecentData.add(_recentMoviesData[i]);
+for (int i = 0; i < moviesProvider.recentMoviesData.length; i++) {
+    allRecentData.add(moviesProvider.recentMoviesData[i]);
 
 }
 
@@ -256,7 +139,7 @@ final List<dynamic> topContent = allRecentData;
       List<String> movieGenres = [];
       List<int> genreIds = List<int>.from(item['genre_ids']);
       for (var genreId in genreIds) {
-        String genreName = _genres[genreId] ?? 'Otros';
+        String genreName = moviesProvider.genres[genreId] ?? 'Otros';
         movieGenres.add(genreName);
      }
 
@@ -275,22 +158,22 @@ final List<dynamic> topContent = allRecentData;
             child: Container(
               margin: const EdgeInsets.symmetric(horizontal: 5.0),
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10.0), // Agrega un borde redondeado a la imagen
+                borderRadius: BorderRadius.circular(10.0), 
                 image: DecorationImage(
                   image: NetworkImage(imageUrl),
-                  fit: BoxFit.cover, // Ajusta la imagen para que cubra el contenedor
+                  fit: BoxFit.cover,
                 ),
               ),
               child: Align(
-                alignment: Alignment.bottomCenter, // Alinea el contenido en la parte inferior del contenedor
+                alignment: Alignment.bottomCenter, 
                 child: Padding(
                   padding: const EdgeInsets.only(bottom: 8.0),
                   child: Text(
                     item['title'] ?? item['name'],
                     style: const TextStyle(
                       fontWeight: FontWeight.bold,
-                      color: Colors.white, // Color del texto
-                      fontSize: 16.0, // Tamaño del texto
+                      color: Colors.white, 
+                      fontSize: 16.0, 
                     ),
                   ),
                 ),
@@ -305,7 +188,7 @@ final List<dynamic> topContent = allRecentData;
 }
 
       
-  Widget _buildSectionHeader(String title) {
+  Widget _buildSectionHeader(MoviesProvider moviesProvider, String title) {
     return Padding(
   padding: const EdgeInsets.symmetric(horizontal: 16.0,),
   child: Row(
@@ -324,24 +207,24 @@ final List<dynamic> topContent = allRecentData;
             if (title == 'Estrenos') {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => FullMovieListPage(title: title, movieList: _recentMoviesData, genres: _genres, )), // Suponiendo que "upcomingMovies" es tu lista de próximos estrenos
+                MaterialPageRoute(builder: (context) => FullMovieListPage(title: title, movieList: moviesProvider.recentMoviesData, genres: moviesProvider.genres, )), // Suponiendo que "upcomingMovies" es tu lista de próximos estrenos
               );
             } else if (title == 'Próximos Estrenos') {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => FullMovieListPage(title: title, movieList: _upcomingData, genres: _genres)), // Suponiendo que "upcomingMovies" es tu lista de próximos estrenos
+                MaterialPageRoute(builder: (context) => FullMovieListPage(title: title, movieList: moviesProvider.upcomingData, genres: moviesProvider.genres)), // Suponiendo que "upcomingMovies" es tu lista de próximos estrenos
               );
             }
             else if (title == 'Populares') {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => FullMovieListPage(title: title, movieList: _popularData, genres: _genres)), // Suponiendo que "upcomingMovies" es tu lista de próximos estrenos
+                MaterialPageRoute(builder: (context) => FullMovieListPage(title: title, movieList: moviesProvider.popularData, genres: moviesProvider.genres)), // Suponiendo que "upcomingMovies" es tu lista de próximos estrenos
               );
             }
             else if (title == 'Mejor Calificadas') {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => FullMovieListPage(title: title, movieList: _topRatedData, genres: _genres)), // Suponiendo que "upcomingMovies" es tu lista de próximos estrenos
+                MaterialPageRoute(builder: (context) => FullMovieListPage(title: title, movieList: moviesProvider.topRatedData, genres: moviesProvider.genres)), // Suponiendo que "upcomingMovies" es tu lista de próximos estrenos
               );
             }
           },
@@ -353,7 +236,7 @@ final List<dynamic> topContent = allRecentData;
 
 }
 
-  Widget _buildItemList(List<dynamic> dataList, String title) {
+  Widget _buildItemList(MoviesProvider moviesProvider, List<dynamic> dataList, String title) {
 
   return Padding(
   padding: const EdgeInsets.only(left: 6.0,),
@@ -366,7 +249,7 @@ final List<dynamic> topContent = allRecentData;
       List<String> movieGenres = [];
       List<int> genreIds = List<int>.from(item['genre_ids']);
       for (var genreId in genreIds) {
-        String genreName = _genres[genreId] ?? 'Otros';
+        String genreName = moviesProvider.genres[genreId] ?? 'Otros';
         movieGenres.add(genreName);
      }
 
@@ -389,9 +272,9 @@ final List<dynamic> topContent = allRecentData;
                 borderRadius: BorderRadius.circular(10.0),
                 child: Image.network(
                   imageUrl,
-                  fit: BoxFit.cover, // Ajusta la imagen para que cubra todo el contenedor
-                  width: 155, // Define el ancho deseado para la imagen
-                  height: 200, // Define la altura deseada para la imagen
+                  fit: BoxFit.cover, 
+                  width: 155,
+                  height: 200, 
                 ),
               ),
               const SizedBox(height: 5),
@@ -401,11 +284,11 @@ final List<dynamic> topContent = allRecentData;
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     SizedBox(
-                    width: 150, // Ancho máximo permitido para el texto
+                    width: 150, 
                     child: Text(
                       item['title'] ?? item['name'],
                       style: const TextStyle(fontWeight: FontWeight.bold),
-                      softWrap: true, // Permitir que el texto se ajuste a varias líneas si es necesario
+                      softWrap: true, 
                     ),
                   ),
                   ],
@@ -490,31 +373,30 @@ Widget build(BuildContext context) {
 
 
 Widget buildContent(BuildContext context, int tabIndex) {
-  // Aquí puedes definir el contenido para cada pestaña
-  // Puedes usar un Switch para determinar qué contenido mostrar según el índice de la pestaña
+  final moviesProvider = Provider.of<MoviesProvider>(context);
   switch (tabIndex) {
     case 0:
       return SingleChildScrollView(
-        padding: EdgeInsets.only(top: 15.0), // Define el margen superior aquí
+        padding: const EdgeInsets.only(top: 15.0), 
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: _buildExploreSections(),
+          children: _buildExploreSections(moviesProvider),
         ),
       );
     case 1:
       return SingleChildScrollView(
-         padding: EdgeInsets.only(top: 20.0),
+         padding: const EdgeInsets.only(top: 20.0),
          child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: _buildCategorySections(),// Este es el contenido de la pestaña 1
+          children: _buildCategorySections(moviesProvider),// Este es el contenido de la pestaña 1
         ),
       );
     case 2:
        return SingleChildScrollView(
-        padding: EdgeInsets.only(top: 20.0),
+        padding: const EdgeInsets.only(top: 20.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: _buildGenreSections(),// Este es el contenido de la pestaña 1
+          children: _buildGenreSections(moviesProvider),// Este es el contenido de la pestaña 1
         ),
       );
     default:

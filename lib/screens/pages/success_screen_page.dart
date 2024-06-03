@@ -1,43 +1,69 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:the_movie_data_base/screens/login/login_screen.dart';
+import 'package:go_router/go_router.dart';
 
 class SuccessScreen extends StatefulWidget {
+  const SuccessScreen({Key? key}) : super(key: key);
+
   @override
   _SuccessScreenState createState() => _SuccessScreenState();
 }
 
-class _SuccessScreenState extends State<SuccessScreen> with SingleTickerProviderStateMixin {
+class _SuccessScreenState extends State<SuccessScreen>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
-  late Animation<Offset> _slideAnimation;
+  late Animation<double> _positionAnimation;
+  late Animation<double> _sizeAnimation;
   late Animation<double> _fadeAnimation;
-  late Animation<double> _iconFadeAnimation;
+  late Animation<double> _iconScaleAnimation;
 
   @override
   void initState() {
     super.initState();
     _controller = AnimationController(
-      duration: const Duration(milliseconds: 800),
+      duration: const Duration(milliseconds: 1000),
       vsync: this,
     );
 
-    _slideAnimation = Tween<Offset>(
-      begin: const Offset(0, 1),
-      end: Offset.zero,
-    ).animate(CurvedAnimation(
-      parent: _controller,
-      curve: Curves.easeOut,
-    ));
+    _positionAnimation = Tween<double>(
+      begin: 1.0, // Comienza abajo de la pantalla
+      end: 0.0, // Termina arriba de la pantalla
+    ).animate(
+      CurvedAnimation(
+        parent: _controller,
+        curve: const Interval(0.0, 0.8, curve: Curves.easeInOut),
+      ),
+    );
 
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
-      parent: _controller,
-      curve: Curves.easeIn,
-    ));
+    _sizeAnimation = Tween<double>(
+      begin: 0.1, // Tamaño pequeño al principio
+      end: 1.0, // Tamaño completo al final
+    ).animate(
+      CurvedAnimation(
+        parent: _controller,
+        curve: const Interval(0.0, 0.8, curve: Curves.easeInOut),
+      ),
+    );
 
-    _iconFadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
-      parent: _controller,
-      curve: Interval(0.5, 1.0, curve: Curves.easeIn),
-    ));
+    _fadeAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(
+      CurvedAnimation(
+        parent: _controller,
+        curve: const Interval(0.8, 1, curve: Curves.easeIn),
+      ),
+    );
+
+    _iconScaleAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(
+      CurvedAnimation(
+        parent: _controller,
+        curve: const Interval(0.8, 1, curve: Curves.bounceOut),
+      ),
+    );
 
     SchedulerBinding.instance.addPostFrameCallback((_) {
       _controller.forward();
@@ -45,9 +71,7 @@ class _SuccessScreenState extends State<SuccessScreen> with SingleTickerProvider
 
     Future.delayed(const Duration(seconds: 5), () {
       _controller.reverse().then((value) {
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => LoginScreen()),
-        );
+        context.pushReplacement('/');
       });
     });
   }
@@ -61,32 +85,57 @@ class _SuccessScreenState extends State<SuccessScreen> with SingleTickerProvider
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.red,
-      body: SlideTransition(
-        position: _slideAnimation,
-        child: FadeTransition(
-          opacity: _fadeAnimation,
-          child: Center(
-            child: FadeTransition(
-              opacity: _iconFadeAnimation,
-              child: const Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.check_circle, color: Colors.white, size: 100),
-                  SizedBox(height: 20),
-                  Text(
-                    'Compra realizada con éxito',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
+      backgroundColor: Colors.transparent,
+      body: AnimatedBuilder(
+        animation: _controller,
+        builder: (context, child) {
+          return Stack(
+            children: [
+              Positioned(
+                top: _positionAnimation.value * MediaQuery.of(context).size.height,
+                left: 0,
+                right: 0,
+                child: SizedBox(
+                  height: _sizeAnimation.value * MediaQuery.of(context).size.height,
+                  width: MediaQuery.of(context).size.width,
+                  child: Container(
+                    color: Colors.red,
                   ),
-                ],
+                ),
               ),
-            ),
-          ),
-        ),
+              FadeTransition(
+                opacity: _fadeAnimation,
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      ScaleTransition(
+                        scale: _iconScaleAnimation,
+                        child: const Icon(
+                          Icons.check_circle,
+                          color: Colors.white,
+                          size: 100,
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      FadeTransition(
+                        opacity: _fadeAnimation,
+                        child: const Text(
+                          'Compra realizada con éxito',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          );
+        },
       ),
     );
   }

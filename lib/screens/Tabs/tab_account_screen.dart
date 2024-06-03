@@ -20,6 +20,7 @@ class TabAccountScreen extends StatefulWidget {
   const TabAccountScreen({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _TabAccountScreenState createState() => _TabAccountScreenState();
 }
 
@@ -47,7 +48,7 @@ class _TabAccountScreenState extends State<TabAccountScreen> {
       final String avatarPath = _accountData['avatar']['tmdb']['avatar_path'];
       return NetworkImage('https://image.tmdb.org/t/p/w500$avatarPath');
     } else {
-      return AssetImage('assets/logo.png');
+      return const AssetImage('assets/logo.png');
     }
   }
 

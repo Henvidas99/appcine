@@ -4,6 +4,8 @@ import 'package:the_movie_data_base/screens/widgets/credit_widget.dart';
 import 'package:the_movie_data_base/screens/widgets/genre_list_widget.dart';
 import 'package:the_movie_data_base/screens/widgets/info_widget.dart';
 import 'package:the_movie_data_base/screens/widgets/trailer_widget.dart'; 
+import 'package:provider/provider.dart';
+import 'package:the_movie_data_base/provider/seat_selection_provider.dart';
 
 class MovieDetailPage extends StatefulWidget {
   final dynamic movie;
@@ -33,26 +35,19 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
   }
 
   Future<Widget> _getTrailer() async {
-    // Implementa la lógica para obtener el trailer de la película de forma asíncrona
-    // Por ejemplo, TrailerWidget(movie: widget.movie)
     return TrailerWidget(movie: widget.movie);
   }
 
   Future<Widget> _getMovieInfo() async {
-    // Implementa la lógica para obtener la información de la película de forma asíncrona
-    // Por ejemplo, showMovieInfo(widget.movie, _showFullOverview)
     return MovieInfoWidget(movie:widget.movie);
   }
 
   Future<Widget> _getMovieCast() async {
-    // Implementa la lógica para obtener el elenco de la película de forma asíncrona
-    // Por ejemplo, showMovieCast(widget.movie)
     return CreditsWidget(movie:widget.movie);
   }
 
   @override
   Widget build(BuildContext context) {
-    print(widget.genreList);
 
     return Scaffold(
       body: FutureBuilder(
@@ -68,36 +63,36 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
 
             return Stack(
               children: [
-                // Este SingleChildScrollView contendrá el resto del contenido.
                 SingleChildScrollView(
                   child: Padding(
-                    padding: EdgeInsets.only(top: 200), // Ajusta 300 según la altura del tráiler
+                    padding: const EdgeInsets.only(top: 200), 
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                          Padding(
-                          padding:  EdgeInsets.all(10.0),
+                          padding:  const EdgeInsets.all(10.0),
                           child: GenreList(chipContents: widget.genreList),
                         ),
                         Padding(
                           padding: const EdgeInsets.all(10.0),
-                          child: snapshot.data![1], // Movie information
+                          child: snapshot.data![1], 
                         ),
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                          child: snapshot.data![2], // Movie cast
+                          child: snapshot.data![2], 
                         ),
                         if(widget.showButton == true)
                         Padding(
                           padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
                           child: ElevatedButton(
-                            onPressed: () {
+                            onPressed: () async {
                               Navigator.push(
                                 context,
                               MaterialPageRoute(
                               builder: (context) => TabTicketScreen(selectedMovie: widget.movie),
                               ),
                             );
+                            Provider.of<SeatSelectionProvider>(context, listen:false).clearSelectedSeats();
                             },
                             style: ElevatedButton.styleFrom(
                             fixedSize: const Size.fromHeight(50),
@@ -110,7 +105,7 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
                     ),
                   ),
                 ),
-                // Este contenedor contendrá el tráiler y permanecerá fijo en la parte superior.
+              
                 Positioned(
                   top: 0,
                   left: 0,
@@ -118,7 +113,7 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
                   child: Stack(
                     children: [
                       Container(
-                        child: snapshot.data![0], // Trailer widget
+                        child: snapshot.data![0], 
                       ),
                       Positioned(
                         top: 30,

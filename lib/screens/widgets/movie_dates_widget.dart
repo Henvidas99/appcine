@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 
 class MovieDatesWidget extends StatefulWidget {
   const MovieDatesWidget({
-    Key? key,
+    super.key,
     required this.onSelectionChanged,
-  }) : super(key: key);
+  });
 
   final Function(String, String) onSelectionChanged;
 
@@ -13,8 +13,8 @@ class MovieDatesWidget extends StatefulWidget {
 }
 
 class _MovieDatesWidgetState extends State<MovieDatesWidget> {
-  int _selectedDateIndex = -1; // Inicializar con -1 para que ninguna fecha esté seleccionada
-  int _selectedTimeIndex = -1; // Inicializar con -1 para que ninguna hora esté seleccionada
+  int _selectedDateIndex = -1; 
+  int _selectedTimeIndex = -1; 
 
   List<Map<String, String>> listDates = [];
   List<String> listHours = [];
@@ -22,7 +22,6 @@ class _MovieDatesWidgetState extends State<MovieDatesWidget> {
   @override
   void initState() {
     super.initState();
-    // Filtrar fechas y horas únicas
     listDates = generateNextDates();
     listHours = generateNextHours();
   }
@@ -62,7 +61,7 @@ class _MovieDatesWidgetState extends State<MovieDatesWidget> {
     if (selectedDate != null && selectedTime != null) {
       widget.onSelectionChanged('${selectedDate['day']} ${selectedDate['month']}', selectedTime);
     } else {
-      widget.onSelectionChanged('', ''); // No hay selección
+      widget.onSelectionChanged('', ''); 
     }
   }
 
@@ -79,8 +78,8 @@ Widget build(BuildContext context) {
           fontSize: 18,
         ),
       ),
-      Container(
-        height: 100, // Altura fija para la selección de fechas
+      SizedBox(
+        height: 100, 
         child: ListView.builder(
           scrollDirection: Axis.horizontal,
           itemCount: listDates.length,
@@ -92,7 +91,7 @@ Widget build(BuildContext context) {
               onTap: () {
                 setState(() {
                   if (_selectedDateIndex == index) {
-                    _selectedDateIndex = -1; // Deseleccionar si ya está seleccionado
+                    _selectedDateIndex = -1; 
                   } else {
                     _selectedDateIndex = index;
                   }
@@ -100,7 +99,7 @@ Widget build(BuildContext context) {
                 });
               },
               child: Container(
-                margin: EdgeInsets.symmetric(horizontal: 8.0),
+                margin: const EdgeInsets.symmetric(horizontal: 8.0),
                 child: MovieDateCard(
                   day: date['day']!,
                   month: date['month']!,
@@ -111,8 +110,8 @@ Widget build(BuildContext context) {
           },
         ),
       ),
-      Container(
-        height: 50, // Altura fija para la selección de horas
+      SizedBox(
+        height: 50, 
         child: ListView.builder(
           scrollDirection: Axis.horizontal,
           itemCount: listHours.length,
@@ -124,7 +123,7 @@ Widget build(BuildContext context) {
               onTap: () {
                 setState(() {
                   if (_selectedTimeIndex == index) {
-                    _selectedTimeIndex = -1; // Deseleccionar si ya está seleccionado
+                    _selectedTimeIndex = -1;
                   } else {
                     _selectedTimeIndex = index;
                   }
@@ -132,7 +131,7 @@ Widget build(BuildContext context) {
                 });
               },
               child: Container(
-                margin: EdgeInsets.symmetric(horizontal: 8.0),
+                margin: const EdgeInsets.symmetric(horizontal: 8.0),
                 child: MovieHourCard(
                   hour: hour,
                   isSelected: isSelected,
@@ -149,11 +148,11 @@ Widget build(BuildContext context) {
 
 class MovieDateCard extends StatelessWidget {
   const MovieDateCard({
-    Key? key,
+    super.key,
     required this.day,
     required this.month,
     required this.isSelected,
-  }) : super(key: key);
+  });
 
   final String day;
   final String month;
@@ -161,13 +160,13 @@ class MovieDateCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorContainer = isSelected ? Color(0xFFE50914) : Colors.black12    ;
+    final colorContainer = isSelected ? const Color(0xFFE50914) : Colors.black12    ;
     final colorText = isSelected ? Colors.black : Colors.grey;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10.0),
       child: Container(
-        width: 55, // Ajustar el ancho para hacerlo alargado
+        width: 55, 
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
           color: colorContainer,
@@ -210,18 +209,18 @@ class MovieDateCard extends StatelessWidget {
 
 class MovieHourCard extends StatelessWidget {
   const MovieHourCard({
-    Key? key,
+    super.key,
     required this.hour,
     required this.isSelected,
-  }) : super(key: key);
+  });
 
   final String hour;
   final bool isSelected;
 
   @override
   Widget build(BuildContext context) {
-    final colorText = isSelected ? Color(0xFFE50914) : Colors.grey;
-    final colorBorder = isSelected ? Color(0xFFE50914) : Colors.transparent;
+    final colorText = isSelected ? const Color(0xFFE50914) : Colors.grey;
+    final colorBorder = isSelected ? const Color(0xFFE50914) : Colors.transparent;
 
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 4.0),
@@ -245,71 +244,3 @@ class MovieHourCard extends StatelessWidget {
     );
   }
 }
-
-/*
-  @override
-  Widget build(BuildContext context) {
-    final colorText = isSelected ? Colors.orange : Colors.grey;
-    final colorBorder = isSelected ? Colors.orange : Colors.transparent;
-
-    return Container(
-      width: 100,
-      decoration: BoxDecoration(
-        color: isSelected ? const Color(0xFF006BF3) : Colors.white,
-        borderRadius: const BorderRadius.all(Radius.circular(15)),
-        border: Border.all(color: const Color(0xFF006BF3)),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                color: Colors.black12,
-                border: Border.all(
-                  color: colorBorder,
-                ),
-              ),
-              padding: const EdgeInsets.all(8.0),
-              child: Center(
-                child: Text(
-                  '${date.day} ${date.month}',
-                  style: TextStyle(
-                    color: colorText,
-                    fontSize: 13,
-                  ),
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(height: 10),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                color: Colors.black12,
-                border: Border.all(
-                  color: colorBorder,
-                ),
-              ),
-              padding: const EdgeInsets.all(8.0),
-              child: Center(
-                child: Text(
-                  date.hour,
-                  style: TextStyle(
-                    color: colorText,
-                    fontSize: 13,
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-*/

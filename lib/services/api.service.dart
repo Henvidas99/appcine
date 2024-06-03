@@ -117,7 +117,7 @@ Future<String?> fetchTrailerKey(int movieId) async {
       return null;
     }
   } catch (e) {
-    print('Error fetching movie trailer: $e');
+    //print('Error fetching movie trailer: $e');
     return null;
   }
 }

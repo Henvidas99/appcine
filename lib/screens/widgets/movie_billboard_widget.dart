@@ -6,9 +6,10 @@ class MovieBillboardWidget extends StatefulWidget {
   final Function(dynamic) onSelectMovie;
   final List movies;
 
-  const MovieBillboardWidget({Key? key, required this.onSelectMovie, required this.movies}) : super(key: key);
+  const MovieBillboardWidget({super.key, required this.onSelectMovie, required this.movies});
 
   @override
+  // ignore: library_private_types_in_public_api
   _MovieBillboardWidgetState createState() => _MovieBillboardWidgetState();
 }
 
@@ -28,20 +29,20 @@ class _MovieBillboardWidgetState extends State<MovieBillboardWidget> {
 
  Widget _buildMoviesGrid(BuildContext context) {
   if (widget.movies.isEmpty) {
-    return Center(child: CircularProgressIndicator());
+    return const Center(child: CircularProgressIndicator());
   }
 
   return GridView.count(
-    crossAxisCount: 3, // Número de columnas en la cuadrícula
-    mainAxisSpacing: 10.0, // Espacio entre las filas
-    childAspectRatio: 0.7, // Relación de aspecto de cada elemento en la cuadrícula
+    crossAxisCount: 3, 
+    mainAxisSpacing: 10.0, 
+    childAspectRatio: 0.7, 
     children: widget.movies.map<Widget>((item) {
       final backdropPath = item['backdrop_path'];
       String imageUrl = backdropPath != null
           ? 'https://image.tmdb.org/t/p/w500$backdropPath'
           : 'https://fotografias.antena3.com/clipping/cmsimages01/2019/05/29/9B89AC82-4176-4127-89A2-F38F13E0A84E/98.jpg';
       return Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 1.0), // Padding interno para cada elemento
+        padding: const EdgeInsets.symmetric(horizontal: 1.0),
         child: GestureDetector(
           onTap: () {
             widget.onSelectMovie(item);
@@ -59,8 +60,8 @@ class _MovieBillboardWidgetState extends State<MovieBillboardWidget> {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 Container(
-                  color: Colors.black.withOpacity(0.6), // Fondo semitransparente para el texto
-                  width: double.infinity, // Asegurar que el contenedor ocupe todo el ancho
+                  color: Colors.black.withOpacity(0.6), 
+                  width: double.infinity,
                   padding: const EdgeInsets.all(4.0),
                   child: Text(
                     item['title'] ?? item['name'],
@@ -70,7 +71,7 @@ class _MovieBillboardWidgetState extends State<MovieBillboardWidget> {
                       fontSize: 12.0,
                     ),
                     textAlign: TextAlign.center,
-                    softWrap: true, // Permitir que el texto se ajuste a varias líneas si es necesario
+                    softWrap: true,
                   ),
                 ),
               ],
@@ -82,6 +83,7 @@ class _MovieBillboardWidgetState extends State<MovieBillboardWidget> {
   );
 }
 
+  @override
   void dispose() {
     super.dispose();
 

@@ -7,6 +7,7 @@ class CreditsWidget extends StatefulWidget {
   const CreditsWidget({super.key, required this.movie});
 
   @override
+  // ignore: library_private_types_in_public_api
   _CreditsWidgetState createState() => _CreditsWidgetState();
 }
 
@@ -16,8 +17,8 @@ class _CreditsWidgetState extends State<CreditsWidget> {
       final ApiService apiService = ApiService();
       return await apiService.fetchMovieCredits(widget.movie['id']);
     } catch (e) {
-      print('Error fetching movie credits: $e');
-      return []; // Devuelve una lista vacía en caso de error
+      //print('Error fetching movie credits: $e');
+      return []; 
     }
   }
 
@@ -33,7 +34,7 @@ class _CreditsWidgetState extends State<CreditsWidget> {
         } else {
           final List<dynamic> credits = snapshot.data!;
           final List<dynamic>? cast = credits[0];
-          final dynamic? director = credits[1];
+          final dynamic director = credits[1];
 
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,

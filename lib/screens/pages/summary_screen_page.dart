@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:the_movie_data_base/screens/pages/success_screen_page.dart';
+import 'package:provider/provider.dart';
+import 'package:the_movie_data_base/provider/seat_selection_provider.dart';
 
 class SummaryScreen extends StatelessWidget {
   final dynamic selectedMovie;
@@ -9,13 +11,14 @@ class SummaryScreen extends StatelessWidget {
   final List<String> selectedSeats;
 
   const SummaryScreen({
-    Key? key,
+    super.key,
     required this.selectedMovie,
     required this.selectedDate,
     required this.selectedTime, 
     required this.selectedSeats,
-  }) : super(key: key);
+  });
 
+  @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     return Scaffold(
@@ -25,18 +28,22 @@ class SummaryScreen extends StatelessWidget {
         children: [
         Column(
           children:  [
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
 
             //Back icon and title
-            _BackIconRow(),
+            const _BackIconRow(),
 
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
 
-            //Tickets Box
+
             TicketsSummaryBox(selectedMovie: selectedMovie, selectedDate: selectedDate, selectedTime: selectedTime, selectedSeats: selectedSeats,),
 
-            //Confirm Button
-            ConfirmBookingsButton(),
+            ConfirmBookingsButton(
+                  selectedMovie: selectedMovie,
+                  selectedDate: selectedDate,
+                  selectedTime: selectedTime,
+                  selectedSeats: selectedSeats,
+                ),
 
             
          
@@ -61,151 +68,8 @@ class SummaryScreen extends StatelessWidget {
 }
 
 
-/*
- Widget build(BuildContext context) {
-  final size = MediaQuery.of(context).size;
-
-  return Scaffold(
-    backgroundColor: const Color(0xff21242C),
-    body: SafeArea(
-      child: Stack(
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(left: 30.0, right: 30.0, top: 10.0),
-            child: Container(
-              height: size.height * .80,
-              width: size.width,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(15.0),
-              ),
-              child: Column(
-                children: [
-                  Container(
-                    height: size.height * .40,
-                    decoration: BoxDecoration(
-                      borderRadius: const BorderRadius.vertical(top: Radius.circular(15.0)),
-                      image: DecorationImage(
-                        image: NetworkImage('https://image.tmdb.org/t/p/w500${selectedMovie['poster_path']}'),
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 20.0),
-                  Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        Expanded(
-                          child: Column(
-                            children: [
-                              Text('Fecha', style: TextStyle(color: Colors.grey, fontSize: 16)),
-                              Text(selectedDate, style: TextStyle(color: Colors.black)),
-                            ],
-                          ),
-                        ),
-                        Expanded(
-                          child: Column(
-                            children: [
-                              Text('TICKETES', style: TextStyle(color: Colors.grey, fontSize: 16)),
-                              Text('${selectedSeats.length}', style: TextStyle(color: Colors.black)),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      Expanded(
-                        child: Column(
-                          children: [
-                            const Text('HORA', style: TextStyle(color: Colors.grey, fontSize: 16)),
-                            Text(selectedTime, style: TextStyle(color: Colors.black)),
-                          ],
-                        ),
-                      ),
-                      Expanded(
-                        child: Column(
-                          children: [
-                            const Text('ASIENTOS', style: TextStyle(color: Colors.grey, fontSize: 16)),
-                            Wrap(
-                              children: List.generate(selectedSeats.length, (i) {
-                                final isLastSeat = i == selectedSeats.length - 1;
-                                return Text(
-                                  isLastSeat ? '${selectedSeats[i]}' : '${selectedSeats[i]}, ',
-                                  style: TextStyle(color: Colors.black),
-                                );
-                              }),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 20.0),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: List.generate(25, (index) => const Text('- ', style: TextStyle(color: Colors.grey))),
-                  ),
-                  const SizedBox(height: 5.0),
-                  Center(
-                    child: QrImageView(
-                      data: 'Película: ${selectedMovie['title']}, Fecha: $selectedDate, Hora: $selectedTime, ',
-                      version: QrVersions.auto,
-                      size: 120.0,
-                      gapless: false,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          Positioned(
-            top: size.height * .680,
-            left: 15,
-            child: const Icon(Icons.circle, color: Color(0xff21242C)),
-          ),
-          Positioned(
-            top: size.height * .680,
-            right: 15,
-            child: const Icon(Icons.circle, color: Color(0xff21242C)),
-          ),
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: Padding(
-              padding: EdgeInsets.only(top: size.height * 0.6),
-              child: ElevatedButton(
-                onPressed: () {
-                  // Acción del botón
-                },
-                style: ElevatedButton.styleFrom(
-                  fixedSize: const Size.fromHeight(50),
-                  backgroundColor: const Color(0xFFE50914),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-                child: const Text(
-                  'CompKrar Tiquetes',
-                  style: TextStyle(fontSize: 18, color: Colors.white),
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    ),
-  );
-}
-*/
-
-
-
 class _BackIconRow extends StatelessWidget {
-  const _BackIconRow({Key? key}) : super(key: key);
+  const _BackIconRow();
 
   @override
   Widget build(BuildContext context) {
@@ -243,12 +107,12 @@ class TicketsSummaryBox extends StatelessWidget {
   final List<String> selectedSeats;
 
   const TicketsSummaryBox({
-    Key? key,
+    super.key,
     required this.selectedMovie,
     required this.selectedDate,
     required this.selectedTime, 
     required this.selectedSeats,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -284,14 +148,14 @@ class TicketsSummaryBox extends StatelessWidget {
                           child: Column(
                             children: [
                               const Center(child: Text('Fecha', style: TextStyle(color: Colors.grey, fontSize: 16))),
-                              Text(selectedDate, style: TextStyle(color: Colors.black)),
+                              Text(selectedDate, style: const TextStyle(color: Colors.black)),
                             ],
                           ),
                         ),
                         Expanded(
                           child: Column(
                             children: [
-                              Text('TICKETES', style: TextStyle(color: Colors.grey, fontSize: 16)),
+                              const Text('TICKETES', style: TextStyle(color: Colors.grey, fontSize: 16)),
                               Text('${selectedSeats.length}', style: const TextStyle(color: Colors.black)),
                             ],
                           ),
@@ -306,7 +170,7 @@ class TicketsSummaryBox extends StatelessWidget {
                         child: Column(
                           children: [
                             const Center(child: Text('HORA', style: TextStyle(color: Colors.grey, fontSize: 16))),
-                            Text(selectedTime, style: TextStyle(color: Colors.black)),
+                            Text(selectedTime, style: const TextStyle(color: Colors.black)),
                           ],
                         ),
                       ),
@@ -320,13 +184,13 @@ class TicketsSummaryBox extends StatelessWidget {
                         Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 8.0),
                           child: Text(
-                            selectedSeats.join(', '), // Unir todos los asientos en una sola cadena con comas
+                            selectedSeats.join(', '), 
                             style: const TextStyle(
                             color: Color.fromARGB(255, 15, 13, 13)
                           ),
-                          overflow: TextOverflow.ellipsis, // Agregar puntos suspensivos si el texto es demasiado largo
-                          maxLines: 1, // Limitar a una sola línea
-                          softWrap: false, // No permitir el ajuste automático de líneas
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1, 
+                          softWrap: false, 
                           ),
                         ),
                       ],
@@ -356,7 +220,18 @@ class TicketsSummaryBox extends StatelessWidget {
 }
 
 class ConfirmBookingsButton extends StatelessWidget {
-  const ConfirmBookingsButton();
+  final dynamic selectedMovie;
+  final String selectedDate;
+  final String selectedTime;
+  final List<String> selectedSeats;
+
+  const ConfirmBookingsButton({
+    super.key,
+    required this.selectedMovie,
+    required this.selectedDate,
+    required this.selectedTime,
+    required this.selectedSeats,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -364,10 +239,14 @@ class ConfirmBookingsButton extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(30, 20, 30, 0),
       child: ElevatedButton(
         onPressed: () {
-        Navigator.of(context).push(
-        MaterialPageRoute(builder: (context) => SuccessScreen()),
-        );
-      },
+
+          final seatSelectionProvider = Provider.of<SeatSelectionProvider>(context, listen: false);
+          seatSelectionProvider.reserveSeats(selectedMovie['id'].toString(), selectedDate, selectedTime);
+
+          Navigator.of(context).push(
+            MaterialPageRoute(builder: (context) => const SuccessScreen()),
+          );
+        },
          style: ElevatedButton.styleFrom(
                   fixedSize: const Size.fromHeight(50),            
                   backgroundColor: const Color(0xFFE50914),

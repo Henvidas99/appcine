@@ -5,11 +5,12 @@ class MovieInfoWidget extends StatefulWidget {
   final dynamic movie;
   
   const MovieInfoWidget({
-    Key? key,
+    super.key,
     required this.movie,
-  }) : super(key: key);
+  });
 
   @override
+  // ignore: library_private_types_in_public_api
   _MovieInfoWidgetState createState() => _MovieInfoWidgetState();
 }
 
@@ -22,7 +23,6 @@ class _MovieInfoWidgetState extends State<MovieInfoWidget> {
     return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
-      // Display the movie overview
       const Padding(
         padding: EdgeInsets.only(bottom: 8.0),
         child: Text(
@@ -33,7 +33,6 @@ class _MovieInfoWidgetState extends State<MovieInfoWidget> {
         ),
       ),
       _buildOverview(),
-      // Display release date, duration, and rating
       Padding(
         padding: const EdgeInsets.symmetric(vertical: 8.0),
         child: Row(
@@ -56,14 +55,14 @@ String _getLanguageName(String languageCode) {
     case 'fr':
       return 'Francés';
     default:
-      return 'Inglés'; // Puedes agregar más casos según los idiomas que necesites
+      return 'Inglés'; 
   }
 }
 
 Widget _buildOverview() {
   final String? overview = widget.movie['overview'];
   final bool hasValidOverview = overview != null && overview.isNotEmpty;
-  final int maxOverviewLength = 225;
+  const int maxOverviewLength = 225;
   final bool isTruncated = hasValidOverview && overview.length >= maxOverviewLength;
 
   return Column(
@@ -79,7 +78,7 @@ Widget _buildOverview() {
           textAlign: TextAlign.justify,
         )
       else
-        Text(
+        const Text(
           'No hay descripción disponible.',
           textAlign: TextAlign.justify,
         ),
@@ -97,7 +96,7 @@ Widget _buildOverview() {
         )
       else
         const Padding(
-          padding: EdgeInsets.only(top: 15.0), // Ajusta el valor del padding según sea necesario
+          padding: EdgeInsets.only(top: 15.0),
         ),
     ],
   );
@@ -112,7 +111,7 @@ Widget _buildOverview() {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          label + ':',
+          '$label:',
           style: const TextStyle(
             fontWeight: FontWeight.bold,
           ),

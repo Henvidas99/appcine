@@ -1,25 +1,41 @@
 import 'package:flutter/material.dart';
 import 'package:the_movie_data_base/models/seats.dart';
 import 'package:the_movie_data_base/screens/widgets/screen_painter.dart';
+import 'package:provider/provider.dart';
+import 'package:the_movie_data_base/provider/seat_selection_provider.dart';
 
 class MovieSeatBox extends StatelessWidget {
   const MovieSeatBox({
-    Key? key,
+    super.key,
     required this.seat,
-    this.size = 30, // Añadido un parámetro de tamaño por defecto
-  }) : super(key: key);
+    this.size = 30, 
+  });
 
   final Seat seat;
-  final double size; // Añadido un parámetro de tamaño
+  final double size; 
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: size, // Usar el parámetro de tamaño
-      height: size, // Usar el parámetro de tamaño
-      decoration: BoxDecoration(
-        color: seat.isSelected ? Colors.blue: seat.isOccupied ? Colors.green  : Colors.grey,
-        borderRadius: BorderRadius.circular(4),
+    final seatSelectionProvider = Provider.of<SeatSelectionProvider>(context);
+    final isSelected = seatSelectionProvider.selectedSeats.contains(seat.id);
+
+    return GestureDetector(
+      onTap: seat.isOccupied
+                    ? null
+                    : () {
+                        seatSelectionProvider.toggleSeatSelection(seat.id);
+                      },
+      child: Container(
+        width: size, 
+        height: size, 
+        decoration: BoxDecoration(
+          color: isSelected
+              ? Colors.blue
+              : seat.isOccupied
+                  ? const Color(0xFFE50914)
+                  : Colors.grey,
+          borderRadius: BorderRadius.circular(4),
+        ),
       ),
     );
   }
@@ -27,26 +43,11 @@ class MovieSeatBox extends StatelessWidget {
 
 class MovieSeats extends StatelessWidget {
   const MovieSeats({
-    Key? key,
+    super.key,
     required this.seats,
-    required this.onSeatSelected,
-  }) : super(key: key);
+  });
 
-  final List<List<Seat>> seats;
-  final VoidCallback onSeatSelected;
-
-
-  static List<String> getSelectedSeats(List<List<Seat>> seats) {
-    List<String> selectedSeats = [];
-    for (var row in seats) {
-      for (var seat in row) {
-        if (seat.isSelected) {
-          selectedSeats.add(seat.id);
-        }
-      }
-    }
-    return selectedSeats;
-  }
+  final List<Seat> seats;
 
   @override
   Widget build(BuildContext context) {
@@ -54,9 +55,9 @@ class MovieSeats extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
       child: Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.only(top:8.0),
-            child: const Text(
+          const Padding(
+            padding: EdgeInsets.only(top:8.0),
+            child: Text(
               'Selecciona los Asientos',
               style: TextStyle(
                 color: Colors.white,
@@ -65,96 +66,83 @@ class MovieSeats extends StatelessWidget {
                 ),
               ),
           ),
-             Padding(
-               padding: const EdgeInsets.only(top: 8.0),
-               child: SizedBox(
-                height: 50,
-                width: MediaQuery.of(context).size.width,
-                child: CustomPaint(
-                  painter: ScreenPainter(),
-                ),
+          Padding(
+            padding: const EdgeInsets.only(top: 8.0),
+            child: SizedBox(
+              height: 50,
+              width: MediaQuery.of(context).size.width,
+              child: CustomPaint(
+                painter: ScreenPainter(),
               ),
-             ),
-            const SizedBox(height:20),
+            ),
+          ),
+          const SizedBox(height:20),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Expanded(
                 flex: 1,
                 child: MovieSeatSection(
-                  seats: seats[0], // Sección A
+                  seats: seats.where((seat) => seat.id.startsWith('A')).toList(), 
                   rowCount: 3,
                   columnCount: 3,
-                  onSeatSelected: onSeatSelected,
-                  seatSize: 30,
                 ),
               ),
               const SizedBox(width: 10),
               Expanded(
                 flex: 2,
                 child: MovieSeatSection(
-                  seats: seats[4], // Sección E
+                  seats: seats.where((seat) => seat.id.startsWith('E')).toList(), 
                   rowCount: 3,
                   columnCount: 6,
-                  onSeatSelected: onSeatSelected,
-                  seatSize: 40, // Tamaño más grande para la sección central
                 ),
               ),
               const SizedBox(width: 10),
               Expanded(
                 flex: 1,
                 child: MovieSeatSection(
-                  seats: seats[1], // Sección C
+                  seats: seats.where((seat) => seat.id.startsWith('B')).toList(),
                   rowCount: 3,
                   columnCount: 3,
-                  onSeatSelected: onSeatSelected,
-                  seatSize: 30,
                 ),
               ),
             ],
           ),
           const SizedBox(height: 20),
-          // Fila inferior: Secciones B, D, F
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Expanded(
                 flex: 1,
                 child: MovieSeatSection(
-                  seats: seats[2], // Sección B
+                  seats: seats.where((seat) => seat.id.startsWith('C')).toList(), 
                   rowCount: 3,
                   columnCount: 3,
-                  onSeatSelected: onSeatSelected,
-                  seatSize: 30,
                 ),
               ),
               const SizedBox(width: 10),
               Expanded(
                 flex: 2,
                 child: MovieSeatSection(
-                  seats: seats[5], // Sección D
+                  seats: seats.where((seat) => seat.id.startsWith('F')).toList(), 
                   rowCount: 3,
                   columnCount: 6,
-                  onSeatSelected: onSeatSelected,
-                  seatSize: 40, // Tamaño más grande para la sección central
                 ),
               ),
               const SizedBox(width: 10),
               Expanded(
                 flex: 1,
                 child: MovieSeatSection(
-                  seats: seats[3], // Sección F
+                  seats: seats.where((seat) => seat.id.startsWith('D')).toList(), 
                   rowCount: 3,
                   columnCount: 3,
-                  onSeatSelected: onSeatSelected,
-                  seatSize: 30,
                 ),
               ),
             ],
           ),
           const Padding(
-              padding: EdgeInsets.only(top: 30.0),
-              child: MovieSeatTypeLegend(),
+            padding: EdgeInsets.only(top: 30.0),
+            child: MovieSeatTypeLegend(),
           ),
         ],
       ),
@@ -164,19 +152,15 @@ class MovieSeats extends StatelessWidget {
 
 class MovieSeatSection extends StatelessWidget {
   const MovieSeatSection({
-    Key? key,
+    super.key,
     required this.seats,
     required this.rowCount,
     required this.columnCount,
-    required this.onSeatSelected,
-    this.seatSize = 30, // Añadido un parámetro de tamaño por defecto
-  }) : super(key: key);
+  });
 
   final List<Seat> seats;
   final int rowCount;
   final int columnCount;
-  final VoidCallback onSeatSelected;
-  final double seatSize; // Añadido un parámetro de tamaño
 
   @override
   Widget build(BuildContext context) {
@@ -188,35 +172,27 @@ class MovieSeatSection extends StatelessWidget {
         crossAxisCount: columnCount,
         mainAxisSpacing: 8,
         crossAxisSpacing: 8,
-        childAspectRatio: 1, // Mantener el aspecto cuadrado
+        childAspectRatio: 1,
       ),
       itemCount: rowCount * columnCount,
       itemBuilder: (_, index) {
         if (index >= seats.length) {
-          return Container(); // Asegurar que el índice no supere el tamaño de la lista de asientos
+          return Container();
         }
         final seat = seats[index];
-        return GestureDetector(
-          onTap: () {
-            seat.isSelected = !seat.isSelected;
-            onSeatSelected();
-          },
-          child: MovieSeatBox(
-            seat: seat,
-            size: seatSize, // Usar el parámetro de tamaño
-          ),
+        return MovieSeatBox(
+          seat: seat,
+          size: 30,
         );
       },
     );
   }
 }
 
-
-
 class MovieSeatTypeLegend extends StatelessWidget {
   const MovieSeatTypeLegend({
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -224,36 +200,34 @@ class MovieSeatTypeLegend extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 4),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: seatTypes.map(
-          (seatType) {
-            return Flexible(
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  SizedBox(
-                    height: 12,
-                    width: 12,
-                    child: DecoratedBox(
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: seatType.color,
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 7),
-                    child: Text(seatType.name, style: TextStyle(color: Colors.white),),
-                  ),
-                ],
-              ),
-            );
-          },
-        ).toList(growable: false),
+        children: [
+          _buildLegendItem('Disponible', Colors.grey),
+          _buildLegendItem('Reservado', const Color(0xFFE50914)),
+          _buildLegendItem('Seleccionado', Colors.blue),
+        ],
       ),
     );
   }
 
-
+  Widget _buildLegendItem(String label, Color color) {
+    return Row(
+      children: [
+        Container(
+          width: 20,
+          height: 20,
+          decoration: BoxDecoration(
+            color: color,
+            borderRadius: BorderRadius.circular(4),
+          ),
+        ),
+        const SizedBox(width: 8),
+        Text(
+          label,
+          style: const TextStyle(color: Colors.white),
+        ),
+      ],
+    );
+  }
 }
 
 

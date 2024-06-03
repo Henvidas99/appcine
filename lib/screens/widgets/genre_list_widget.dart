@@ -5,9 +5,9 @@ class GenreList extends StatelessWidget {
   final List<String> chipContents;
 
   const GenreList({
-    Key? key,
+    super.key,
     required this.chipContents,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -24,12 +24,12 @@ class GenreList extends StatelessWidget {
         ),
       ),
       SizedBox(
-        height: 30, // Altura para el ListView
+        height: 30, 
         child: ListView.separated(
           physics: const BouncingScrollPhysics(),
           scrollDirection: Axis.horizontal,
           itemCount: chipContents.length,
-          separatorBuilder: (ctx, i) => SizedBox(width: 20),
+          separatorBuilder: (ctx, i) => const SizedBox(width: 20),
           itemBuilder: (ctx, i) => buildChipListItem(i),
         ),
       ),

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class Seat {
   final String id;
   final bool isHidden;
-  final bool isOccupied;
+  bool isOccupied;
   bool isSelected;
 
   Seat({

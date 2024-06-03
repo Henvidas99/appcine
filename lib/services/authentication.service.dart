@@ -75,8 +75,6 @@ class AuthenticationService {
       
 
     } catch (error) {
-      // Manejo de errores: puedes mostrar un mensaje de error en la UI
-      // Por ejemplo, mostrando un Snackbar o actualizando un Text widget con el mensaje de error
       rethrow;
     }
   }

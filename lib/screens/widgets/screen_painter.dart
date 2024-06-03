@@ -5,7 +5,7 @@ class ScreenPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = Color(0xFFE50914)
+      ..color = const Color(0xFFE50914)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 5
       ..strokeCap = StrokeCap.round;
@@ -19,7 +19,7 @@ class ScreenPainter extends CustomPainter {
 
     canvas.drawPath(path, paint);
     canvas.drawShadow(
-        path, Color(0xFFE50914).withOpacity(0.3), 10, false);
+        path, const Color(0xFFE50914).withOpacity(0.3), 10, false);
   }
 
   @override
