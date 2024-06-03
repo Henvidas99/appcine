@@ -110,9 +110,9 @@ class _LoginScreenState extends State<LoginScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [   
                 Image.asset(
-                  'assets/logo.png',  
-                  width: 70,
-                  height: 70,
+                  'assets/palomitasLentesLogo.png',  
+                  width: 250,
+                  height: 250,
                 ),
                 const SizedBox(height: 36.0),
                 Container(
