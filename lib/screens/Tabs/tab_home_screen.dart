@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:the_movie_data_base/screens/pages/full_movie_list_page.dart';
 import 'package:the_movie_data_base/screens/pages/movie_detail_page.dart';
+import 'package:the_movie_data_base/screens/pages/search_results_page.dart';
 import 'package:the_movie_data_base/services/api.service.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:provider/provider.dart';
@@ -65,6 +66,18 @@ class _TabHomeScreenState extends State<TabHomeScreen> {
       setState(() {
         _isSearching = false;
       });
+    }
+  }
+
+  void _navigateToSearchResults(BuildContext context) {
+    final query = _searchController.text;
+    if (query.isNotEmpty) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => SearchResultsPage(query: query),
+        ),
+      );
     }
   }
 
@@ -386,7 +399,6 @@ class _TabHomeScreenState extends State<TabHomeScreen> {
                         alignment: Alignment.centerRight,
                         child: Container(
                           height: 40,
-                          width: 250, // Ajusta el ancho aquí
                           padding: const EdgeInsets.symmetric(horizontal: 10.0),
                           decoration: BoxDecoration(
                             color: AppColors.blackBackground,
@@ -413,9 +425,12 @@ class _TabHomeScreenState extends State<TabHomeScreen> {
                                   },
                                 ),
                               ),
-                              const Icon(
-                                Icons.search,
-                                color: Colors.grey,
+                              IconButton(
+                                icon: const Icon(Icons.search),
+                                color: AppColors.lightBackground,
+                                onPressed: () {
+                                  _navigateToSearchResults(context);
+                                },
                               ),
                             ],
                           ),
@@ -462,7 +477,7 @@ class _TabHomeScreenState extends State<TabHomeScreen> {
                             _searchResults.isNotEmpty)
                           Positioned(
                             top: 0,
-                            left: 700,
+                            left: 0,
                             right: 0,
                             child: Container(
                               color: const Color.fromARGB(144, 0, 0, 0),
