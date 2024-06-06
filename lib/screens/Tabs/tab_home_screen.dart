@@ -392,30 +392,35 @@ class _TabHomeScreenState extends State<TabHomeScreen> {
                             color: AppColors.blackBackground,
                             borderRadius: BorderRadius.circular(20),
                           ),
-                          child: TextField(
-                            controller: _searchController,
-                            decoration: const InputDecoration(
-                              hintText: 'Buscar películas...',
-                              border: InputBorder.none,
-                              hintStyle: TextStyle(color: Colors.grey),
-                            ),
-                            style: const TextStyle(color: AppColors.lightBackground),
-                            onChanged: (query) {
-                              _searchMovies(query);
-                              if (query.isEmpty) {
-                                setState(() {
-                                  _searchResults = [];
-                                });
-                              }
-                            },
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: TextField(
+                                  controller: _searchController,
+                                  decoration: const InputDecoration(
+                                    hintText: 'Buscar películas...',
+                                    border: InputBorder.none,
+                                    hintStyle: TextStyle(color: Colors.grey),
+                                  ),
+                                  style: const TextStyle(color: AppColors.lightBackground),
+                                  onChanged: (query) {
+                                    _searchMovies(query);
+                                    if (query.isEmpty) {
+                                      setState(() {
+                                        _searchResults = [];
+                                      });
+                                    }
+                                  },
+                                ),
+                              ),
+                              const Icon(
+                                Icons.search,
+                                color: Colors.grey,
+                              ),
+                            ],
                           ),
                         ),
                       ),
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.search),
-                      color: Colors.white,
-                      onPressed: () {},
                     ),
                   ],
                 ),
