@@ -5,6 +5,17 @@ class ApiService {
   static const String apiKey = 'ded71725655780ba4d50e97a4eccdeec';
   static const String baseUrl = 'https://api.themoviedb.org/3';
 
+   Future<List<dynamic>> searchMovies(String query) async {
+    final url = '$baseUrl/search/movie?api_key=$apiKey&query=$query';
+    final response = await http.get(Uri.parse(url));
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body)['results'];
+      return data;
+    } else {
+      throw Exception('Failed to search movies');
+    }
+  }
 
   Future<List<dynamic>> fetchActualMovies() async {
     const url = '$baseUrl/movie/now_playing?api_key=$apiKey';
