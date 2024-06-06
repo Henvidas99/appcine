@@ -382,17 +382,24 @@ class _TabHomeScreenState extends State<TabHomeScreen> {
                     ),
                     const SizedBox(width: 8),
                     Expanded(
-                      child: Stack(
+                      child: Align(
                         alignment: Alignment.centerRight,
-                        children: [
-                          TextField(
+                        child: Container(
+                          height: 40,
+                          width: 250, // Ajusta el ancho aquí
+                          padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                          decoration: BoxDecoration(
+                            color: AppColors.blackBackground,
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: TextField(
                             controller: _searchController,
                             decoration: const InputDecoration(
-                              hintText: '',
+                              hintText: 'Buscar películas...',
                               border: InputBorder.none,
+                              hintStyle: TextStyle(color: Colors.grey),
                             ),
-                            style: const TextStyle(color: Colors.white),
-                            textAlign: TextAlign.right,
+                            style: const TextStyle(color: AppColors.lightBackground),
                             onChanged: (query) {
                               _searchMovies(query);
                               if (query.isEmpty) {
@@ -402,15 +409,7 @@ class _TabHomeScreenState extends State<TabHomeScreen> {
                               }
                             },
                           ),
-                          if (_searchController.text.isEmpty)
-                            const Positioned(
-                              right: 10,
-                              child: Text(
-                                'Buscar películas...',
-                                style: TextStyle(color: Colors.white),
-                              ),
-                            ),
-                        ],
+                        ),
                       ),
                     ),
                     IconButton(
