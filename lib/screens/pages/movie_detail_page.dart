@@ -47,92 +47,84 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
   }
 
   @override
-  Widget build(BuildContext context) {
-
-    return Scaffold(
-      body: FutureBuilder(
-        future: _loadMovieDetails(),
-        builder: (context, AsyncSnapshot<List<Widget>> snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(
-              child: Text('Error loading movie details: ${snapshot.error}'),
-            );
-          } else {
-
-            return Stack(
+  @override
+Widget build(BuildContext context) {
+  return Scaffold(
+    body: FutureBuilder(
+      future: _loadMovieDetails(),
+      builder: (context, AsyncSnapshot<List<Widget>> snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          return Center(
+            child: Text('Error loading movie details: ${snapshot.error}'),
+          );
+        } else {
+          return SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                SingleChildScrollView(
-                  child: Padding(
-                    padding: const EdgeInsets.only(top: 200), 
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                         Padding(
-                          padding:  const EdgeInsets.all(10.0),
-                          child: GenreList(chipContents: widget.genreList),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(10.0),
-                          child: snapshot.data![1], 
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                          child: snapshot.data![2], 
-                        ),
-                        if(widget.showButton == true)
+                Stack(
+                  children: [
+                    Container(
+                      child: snapshot.data![0],
+                    ),
+                    Positioned(
+                      top: 30,
+                      child: BackButton(
+                        color: Colors.white,
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+                Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: GenreList(chipContents: widget.genreList),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: snapshot.data![1],
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                        child: snapshot.data![2],
+                      ),
+                      if (widget.showButton == true)
                         Padding(
                           padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
                           child: ElevatedButton(
                             onPressed: () async {
                               Navigator.push(
                                 context,
-                              MaterialPageRoute(
-                              builder: (context) => TabTicketScreen(selectedMovie: widget.movie),
-                              ),
-                            );
-                            Provider.of<SeatSelectionProvider>(context, listen:false).clearSelectedSeats();
+                                MaterialPageRoute(
+                                  builder: (context) => TabTicketScreen(selectedMovie: widget.movie),
+                                ),
+                              );
+                              Provider.of<SeatSelectionProvider>(context, listen: false).clearSelectedSeats();
                             },
                             style: ElevatedButton.styleFrom(
-                            fixedSize: const Size.fromHeight(50),
-                            backgroundColor: const Color(0xFFE50914),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
-                            child: const Text('Comprar Tiquetes', style: TextStyle(fontSize: 18, color: Colors.white)),
+                                fixedSize: const Size.fromHeight(50),
+                                backgroundColor: const Color(0xFFE50914),
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
+                            child: const Text('Reservar Tiquetes', style: TextStyle(fontSize: 18, color: Colors.white)),
                           ),
                         ),
-                      ],
-                    ),
-                  ),
-                ),
-              
-                Positioned(
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  child: Stack(
-                    children: [
-                      Container(
-                        child: snapshot.data![0], 
-                      ),
-                      Positioned(
-                        top: 30,
-                        child: BackButton(
-                          color: Colors.white,
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
-                        ),
-                      ),
                     ],
                   ),
-                ),
               ],
-            );
-          }
-        },
-      ),
-    );
-  }
+            ),
+          );
+        }
+      },
+    ),
+  );
+}
+
 
 }

@@ -21,7 +21,7 @@ class _TabHomeScreenState extends State<TabHomeScreen> {
   bool _isLoading = true;
   final TextEditingController _searchController = TextEditingController();
   List<dynamic> _searchResults = [];
-  bool _isSearching = false;
+  bool  _isSearching= false;
 
   @override
   void initState() {
@@ -296,7 +296,7 @@ class _TabHomeScreenState extends State<TabHomeScreen> {
       ),
     );
   }
-
+/*
   Widget _buildItemList(
       MoviesProvider moviesProvider, List<dynamic> dataList, String title) {
     return Padding(
@@ -371,14 +371,232 @@ class _TabHomeScreenState extends State<TabHomeScreen> {
     );
   }
 
-  List<Tab> tabs = [
-    const Tab(child: Text("Explora")),
-    const Tab(child: Text("Categorías")),
-    const Tab(child: Text("Géneros")),
-  ];
+*/
 
-  @override
-  Widget build(BuildContext context) {
+    /*  
+  Widget _buildSectionHeader(MoviesProvider moviesProvider, String title) {
+    return Padding(
+  padding: const EdgeInsets.symmetric(horizontal: 16.0,),
+  child: Row(
+    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    children: [
+      Text(
+        title,
+        style: const TextStyle(
+          fontSize: 20,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+      if (title == 'Estrenos' || title == 'Próximos Estrenos' || title == 'Populares' || title == 'Mejor Calificadas') 
+        GestureDetector(
+          onTap: () {
+            if (title == 'Estrenos') {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => FullMovieListPage(title: title, movieList: moviesProvider.recentMoviesData, genres: moviesProvider.genres, )), // Suponiendo que "upcomingMovies" es tu lista de próximos estrenos
+              );
+            } else if (title == 'Próximos Estrenos') {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => FullMovieListPage(title: title, movieList: moviesProvider.upcomingData, genres: moviesProvider.genres)), // Suponiendo que "upcomingMovies" es tu lista de próximos estrenos
+              );
+            }
+            else if (title == 'Populares') {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => FullMovieListPage(title: title, movieList: moviesProvider.popularData, genres: moviesProvider.genres)), // Suponiendo que "upcomingMovies" es tu lista de próximos estrenos
+              );
+            }
+            else if (title == 'Mejor Calificadas') {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => FullMovieListPage(title: title, movieList: moviesProvider.topRatedData, genres: moviesProvider.genres)), // Suponiendo que "upcomingMovies" es tu lista de próximos estrenos
+              );
+            }
+          },
+          child: const Icon(Icons.more_horiz),
+        ),
+    ],
+  ),
+);
+
+}*/
+
+  Widget _buildItemList(MoviesProvider moviesProvider, List<dynamic> dataList, String title) {
+  final screenWidth = MediaQuery.of(context).size.width;
+  final itemWidth = (screenWidth - 44) / 2; // Ajusta el tamaño del elemento según el ancho de la pantalla
+
+  return Padding(
+    padding: const EdgeInsets.all(10.0),
+    child: SizedBox(
+      height: 270,
+      child: ListView(
+        scrollDirection: Axis.horizontal,
+        children: dataList.take(5).map<Widget>((item) {
+          List<String> movieGenres = [];
+          List<int> genreIds = List<int>.from(item['genre_ids']);
+          for (var genreId in genreIds) {
+            String genreName = moviesProvider.genres[genreId] ?? 'Otros';
+            movieGenres.add(genreName);
+          }
+
+          final backdropPath = item['backdrop_path'];
+          String imageUrl = backdropPath != null
+              ? 'https://image.tmdb.org/t/p/w500$backdropPath'
+              : 'https://fotografias.antena3.com/clipping/cmsimages01/2019/05/29/9B89AC82-4176-4127-89A2-F38F13E0A84E/98.jpg';
+          return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 6.0),
+            child: GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => MovieDetailPage(movie: item, genreList: movieGenres, showButton: title == 'Estrenos' ? true : false)),
+                );
+              },
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(10.0),
+                    child: Image.network(
+                      imageUrl,
+                      fit: BoxFit.cover,
+                      width: itemWidth,
+                      height: 200,
+                    ),
+                  ),
+                  const SizedBox(height: 5),
+                  Padding(
+                    padding: const EdgeInsets.all(2.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(
+                          width: itemWidth,
+                          child: Text(
+                            item['title'] ?? item['name'],
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                            softWrap: true,
+                          ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }).toList(),
+        ),
+      ),
+    );
+  }                  
+  
+  
+
+  Widget buildContent(BuildContext context, int tabIndex) {
+    final moviesProvider = Provider.of<MoviesProvider>(context);
+    switch (tabIndex) {
+      case 0:
+        return SingleChildScrollView(
+          padding: const EdgeInsets.only(top: 15.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: _buildExploreSections(moviesProvider),
+            ),
+          );
+      case 1:
+          return SingleChildScrollView(
+            padding: const EdgeInsets.only(top: 20.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: _buildCategorySections(moviesProvider),
+            ),
+          );
+      case 2:
+            return SingleChildScrollView(
+              padding: const EdgeInsets.only(top: 20.0),
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: _buildGenreSections(moviesProvider),
+              ),
+            );
+      default:
+          return Container();
+          }
+        }
+
+
+
+
+List<Tab> tabs = [
+  const Tab(child: Text("Explora")),
+  const Tab(child: Text("Categorías")),
+  const Tab(child: Text("Géneros")),
+];
+
+@override
+Widget build(BuildContext context) {
+  return _isLoading
+      ? const Center(
+          child: CircularProgressIndicator(), // Muestra un indicador de carga mientras se cargan los datos
+        )
+      : DefaultTabController(
+        length: 3,
+        child: Scaffold(
+          appBar: AppBar(
+          title: Image.asset(
+              'assets/palomitaLente.png',
+              height: 35, 
+            ),
+        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
+        toolbarHeight: 35,
+        actions: [
+          IconButton(
+          icon: const Icon(Icons.search), color: Theme.of(context).iconTheme.color,
+            onPressed: () {
+            },
+          ),
+        ], 
+      ),
+          body: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Divider(
+                height: 0.5, // Altura delgada
+                thickness: 0.5,
+                color: Color.fromARGB(255, 77, 80, 60), // Color de la línea gris
+              ),
+              Container(
+                color: Theme.of(context).appBarTheme.backgroundColor,// Color del contenedor
+                height: 35, // Altura del contenedor
+                child: TabBar(
+                  dividerColor: const Color.fromARGB(255, 77, 80, 60),
+                  labelColor: Theme.of(context).primaryColor,
+                  unselectedLabelColor: Theme.of(context).iconTheme.color,
+                  indicatorColor: Theme.of(context).primaryColor,
+                  isScrollable: false,
+                  tabs: tabs,
+                ),
+              ),
+              Expanded(
+                child: TabBarView(
+                  children: [
+                    buildContent(context, 0), // Contenido de la pestaña 1
+                    buildContent(context, 1), // Contenido de la pestaña 2
+                    buildContent(context, 2), // Contenido de la pestaña 3
+                  ],
+                ),
+              ),        
+            ],
+          ),
+        ),
+      ); 
+  }
+
+
+  //@override
+  Widget build2(BuildContext context) {
     return _isLoading
         ? const Center(
             child: CircularProgressIndicator(),
@@ -524,44 +742,12 @@ class _TabHomeScreenState extends State<TabHomeScreen> {
                               ),
                             ),
                           ),
-                      ],
-                    ),
+                        ],
+                      ),
                   ),
                 ],
               ),
             ),
-          );
-  }
-
-  Widget buildContent(BuildContext context, int tabIndex) {
-    final moviesProvider = Provider.of<MoviesProvider>(context);
-    switch (tabIndex) {
-      case 0:
-        return SingleChildScrollView(
-          padding: const EdgeInsets.only(top: 15.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: _buildExploreSections(moviesProvider),
-          ),
         );
-      case 1:
-        return SingleChildScrollView(
-          padding: const EdgeInsets.only(top: 20.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: _buildCategorySections(moviesProvider),
-          ),
-        );
-      case 2:
-        return SingleChildScrollView(
-          padding: const EdgeInsets.only(top: 20.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: _buildGenreSections(moviesProvider),
-          ),
-        );
-      default:
-        return Container();
+      }
     }
-  }
-}

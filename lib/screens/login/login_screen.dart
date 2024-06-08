@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../services/authentication.service.dart'; 
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
+import 'package:the_movie_data_base/provider/account_provider.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -51,7 +53,11 @@ class _LoginScreenState extends State<LoginScreen> {
     });
 
     try {
-      await AuthenticationService().login(username, password);
+      final data = await AuthenticationService().login(username, password);
+      // ignore: use_build_context_synchronously
+      final accountProvider = Provider.of<AccountProvider>(context, listen: false);
+           accountProvider.addAccount(data);
+
 
       // ignore: use_build_context_synchronously
       context.go('/');
@@ -92,6 +98,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       body: Stack(
         children: [
@@ -113,6 +120,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   'assets/palomitasLentesLogo.png',  
                   width: 250,
                   height: 250,
+
                 ),
                 const SizedBox(height: 36.0),
                 Container(

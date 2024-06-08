@@ -1,14 +1,15 @@
 import 'dart:convert';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import '../utils/config.dart'; // Asegúrate de importar tu archivo de configuración
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:the_movie_data_base/models/account.dart';
+import '../utils/config.dart'; 
 
 
 class AuthenticationService {
   final String baseUrl = Config.baseUrl;
   final String apiKey = Config.apiKey;
 
-  Future<void> login(String username, String password) async {
+  Future<Account> login(String username, String password) async {
     try {
       // Paso 1: Crear un token de solicitud
       final tokenResponse = await http.get(
@@ -68,19 +69,33 @@ class AuthenticationService {
         throw Exception('Error al obtener la cuenta del usuario');
       }
 
-      final accountDataObject = json.decode(accountResponse.body);
-      // ignore: unused_local_variable
-      final accountData = json.encode(accountDataObject);
-      await saveAccountData(accountData);
-      
+      final accountData= json.decode(accountResponse.body);
+
+
+      final account = Account(
+            userId: accountData['id'].toString(), 
+            username: accountData['username'], 
+            name: accountData['username'], 
+            avatar: getAvatarImage(accountData),
+            
+          );
+
+      return account;
 
     } catch (error) {
       rethrow;
     }
   }
 
-   Future<void> saveAccountData(String accountData) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString('accountData', accountData);
+   ImageProvider<Object> getAvatarImage(accountData) {
+    if (accountData.containsKey('avatar') &&
+        accountData['avatar'] != null &&
+        accountData['avatar']['tmdb'] != null &&
+        accountData['avatar']['tmdb']['avatar_path'] != null) {
+      final String avatarPath = accountData['avatar']['tmdb']['avatar_path'];
+      return NetworkImage('https://image.tmdb.org/t/p/w500$avatarPath');
+    } else {
+      return const AssetImage('assets/logo.png');
+    }
   }
 }

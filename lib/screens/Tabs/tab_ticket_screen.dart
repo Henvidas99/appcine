@@ -239,7 +239,7 @@ class _TabTicketScreenState extends State<TabTicketScreen> {
                                       return Colors.white; // Color del texto cuando el botón está habilitado
                                   }),
                                 ),
-                                  child: const Text('Comprar Tiquetes', style: TextStyle(fontSize: 18)),
+                                  child: const Text('Reservar Tiquetes', style: TextStyle(fontSize: 18)),
                                 ),
                               ],
                             ),
