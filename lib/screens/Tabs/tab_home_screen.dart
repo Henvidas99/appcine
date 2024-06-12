@@ -1,3 +1,4 @@
+import 'package:back_button_interceptor/back_button_interceptor.dart';
 import 'package:flutter/material.dart';
 import 'package:the_movie_data_base/screens/pages/full_movie_list_page.dart';
 import 'package:the_movie_data_base/screens/pages/movie_detail_page.dart';
@@ -22,11 +23,48 @@ class _TabHomeScreenState extends State<TabHomeScreen> {
   final TextEditingController _searchController = TextEditingController();
   List<dynamic> _searchResults = [];
   bool _isSearching = false;
+  DateTime? lastPressed;
+
 
   @override
   void initState() {
     super.initState();
     _fetchData();
+    BackButtonInterceptor.add(interceptor);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    BackButtonInterceptor.remove(interceptor);
+  }
+
+  bool interceptor(bool btnEvent, RouteInfo info){
+      final now = DateTime.now();
+      if(lastPressed == null || now.difference(lastPressed!) > const Duration(seconds: 3)){
+        lastPressed = now;
+      final snackBar = SnackBar(    
+          backgroundColor: Colors.blueGrey,
+          margin: const EdgeInsets.only(bottom: 60.0, left: 40, right: 40),
+          content: Container(
+              decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(60),
+              ),
+              child: const Center(
+                child: Text(
+                  'Presiona nuevamente para salir',
+                   style: TextStyle(color: Colors.white, fontSize: 14),
+                  ),
+              ),
+              ),
+              duration: const Duration(seconds: 3),
+              behavior: SnackBarBehavior.floating,
+            );
+            // ignore: use_build_context_synchronously
+          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+            return true;
+      }
+          return false;
   }
 
   Future<void> _fetchData() async {
@@ -416,7 +454,7 @@ class _TabHomeScreenState extends State<TabHomeScreen> {
   Widget build2(BuildContext context) {
     return _isLoading
         ? const Center(
-            child: CircularProgressIndicator(), // Muestra un indicador de carga mientras se cargan los datos
+            child: CircularProgressIndicator(),
           )
         : DefaultTabController(
             length: 3,
@@ -444,10 +482,10 @@ class _TabHomeScreenState extends State<TabHomeScreen> {
                   const Divider(
                     height: 0.5, // Altura delgada
                     thickness: 0.5,
-                    color: Color.fromARGB(255, 77, 80, 60), // Color de la línea gris
+                    color: Color.fromARGB(255, 77, 80, 60), 
                   ),
                   Container(
-                    color: Theme.of(context).appBarTheme.backgroundColor, // Color del contenedor
+                    color: Theme.of(context).appBarTheme.backgroundColor, 
                     height: 35, // Altura del contenedor
                     child: TabBar(
                       dividerColor: const Color.fromARGB(255, 77, 80, 60),
@@ -461,9 +499,9 @@ class _TabHomeScreenState extends State<TabHomeScreen> {
                   Expanded(
                     child: TabBarView(
                       children: [
-                        buildContent(context, 0), // Contenido de la pestaña 1
-                        buildContent(context, 1), // Contenido de la pestaña 2
-                        buildContent(context, 2), // Contenido de la pestaña 3
+                        buildContent(context, 0), 
+                        buildContent(context, 1), 
+                        buildContent(context, 2), 
                       ],
                     ),
                   ),
@@ -473,166 +511,166 @@ class _TabHomeScreenState extends State<TabHomeScreen> {
           );
   }
 
-  //@override
-  Widget build(BuildContext context) {
-  return _isLoading
-      ? const Center(
-          child: CircularProgressIndicator(),
-        )
-      : DefaultTabController(
-          length: 3,
-          child: Scaffold(
-            appBar: AppBar(
-              title: Row(
-                children: [
-                  Image.asset(
-                    'assets/palomitaLente.png',
-                    height: 35,
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Align(
-                      alignment: Alignment.centerRight,
-                      child: SizedBox(
-                        width: 200, // Podes cambiar el largo de la barra aqui
-                        child: Container(
-                          height: 40,
-                          padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                          decoration: BoxDecoration(
-                            color: AppColors.blackBackground,
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: TextField(
-                                  controller: _searchController,
-                                  decoration: const InputDecoration(
-                                    hintText: 'Buscar películas...',
-                                    border: InputBorder.none,
-                                    hintStyle: TextStyle(color: Colors.grey),
-                                  ),
-                                  style: const TextStyle(color: AppColors.lightBackground),
-                                  onChanged: (query) {
-                                    _searchMovies(query);
-                                    if (query.isEmpty) {
-                                      setState(() {
-                                        _searchResults = [];
-                                      });
-                                    }
-                                  },
-                                ),
-                              ),
-                              IconButton(
-                                icon: const Icon(Icons.search),
-                                color: AppColors.lightBackground,
-                                onPressed: () {
-                                  _navigateToSearchResults(context);
-                                },
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              backgroundColor: AppColors.blackBackground,
-              toolbarHeight: 60,
-            ),
-            body: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Divider(
-                  height: 0.5,
-                  thickness: 0.5,
-                  color: Color.fromARGB(255, 77, 80, 60),
-                ),
-                Container(
-                  color: Theme.of(context).appBarTheme.backgroundColor,
-                  height: 35,
-                  child: TabBar(
-                    dividerColor: const Color.fromARGB(255, 77, 80, 60),
-                    labelColor: Theme.of(context).primaryColor,
-                    unselectedLabelColor: Theme.of(context).iconTheme.color,
-                    indicatorColor: Theme.of(context).primaryColor,
-                    isScrollable: false,
-                    tabs: const [
-                      Tab(child: Text("Explora", textAlign: TextAlign.center)),
-                      Tab(child: Text("Categorías", textAlign: TextAlign.center)),
-                      Tab(child: Text("Géneros", textAlign: TextAlign.center)),
-                    ],
-                    labelPadding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  ),
-                ),
-                Expanded(
-                  child: Stack(
+
+  @override
+   Widget build(BuildContext context) {
+    return _isLoading
+        ? const Center(
+            child: CircularProgressIndicator(),
+          )
+        : DefaultTabController(
+              length: 3,
+              child: Scaffold(
+                appBar: AppBar(
+                  title: Row(
                     children: [
-                      TabBarView(
-                        children: [
-                          buildContent(context, 0),
-                          buildContent(context, 1),
-                          buildContent(context, 2),
-                        ],
+                      Image.asset(
+                        'assets/palomitaLente.png',
+                        height: 35,
                       ),
-                      if (_searchController.text.isNotEmpty && _searchResults.isNotEmpty)
-                        Positioned(
-                          top: 0,
-                          left: 0,
-                          right: 0,
-                          child: Container(
-                            color: const Color.fromARGB(144, 0, 0, 0),
-                            height: 200,
-                            child: Material(
-                              color: Colors.transparent,
-                              elevation: 5,
-                              child: ListView.builder(
-                                shrinkWrap: true,
-                                itemCount: _searchResults.length,
-                                itemBuilder: (context, index) {
-                                  final movie = _searchResults[index];
-                                  final moviesProvider = Provider.of<MoviesProvider>(context, listen: false);
-                                  final List<String> movieGenres = [];
-                                  final List<int> genreIds = List<int>.from(movie['genre_ids']);
-                                  for (var genreId in genreIds) {
-                                    final genreName = moviesProvider.genres[genreId] ?? 'Otros';
-                                    movieGenres.add(genreName);
-                                  }
-                                  return ListTile(
-                                    leading: Image.network(
-                                      movie['poster_path'] != null
-                                          ? 'https://image.tmdb.org/t/p/w92${movie['poster_path']}'
-                                          : 'https://via.placeholder.com/92x138?text=No+Image',
-                                      fit: BoxFit.cover,
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Align(
+                          alignment: Alignment.centerRight,
+                          child: SizedBox(
+                            width: 200, // Podes cambiar el largo de la barra aqui
+                            child: Container(
+                              height: 40,
+                              padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                              decoration: BoxDecoration(
+                                color: AppColors.blackBackground,
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    child: TextField(
+                                      controller: _searchController,
+                                      decoration: const InputDecoration(
+                                        hintText: 'Buscar películas...',
+                                        border: InputBorder.none,
+                                        hintStyle: TextStyle(color: Colors.grey),
+                                      ),
+                                      style: const TextStyle(color: AppColors.lightBackground),
+                                      onChanged: (query) {
+                                        _searchMovies(query);
+                                        if (query.isEmpty) {
+                                          setState(() {
+                                            _searchResults = [];
+                                          });
+                                        }
+                                      },
                                     ),
-                                    title: Text(movie['title'], style: const TextStyle(color: Colors.white)),
-                                    subtitle: Text(movie['release_date'], style: const TextStyle(color: Colors.white)),
-                                    onTap: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => MovieDetailPage(
-                                            movie: movie,
-                                            showButton: true,
-                                            genreList: movieGenres,
-                                          ),
-                                        ),
-                                      );
+                                  ),
+                                  IconButton(
+                                    icon: const Icon(Icons.search),
+                                    color: AppColors.lightBackground,
+                                    onPressed: () {
+                                      _navigateToSearchResults(context);
                                     },
-                                  );
-                                },
+                                  ),
+                                ],
                               ),
                             ),
                           ),
                         ),
+                      ),
                     ],
                   ),
+                  backgroundColor: AppColors.blackBackground,
+                  toolbarHeight: 60,
                 ),
-              ],
-            ),
-          ),
-        );
-}
-
+                body: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Divider(
+                      height: 0.5,
+                      thickness: 0.5,
+                      color: Color.fromARGB(255, 77, 80, 60),
+                    ),
+                    Container(
+                      color: Theme.of(context).appBarTheme.backgroundColor,
+                      height: 35,
+                      child: TabBar(
+                        dividerColor: const Color.fromARGB(255, 77, 80, 60),
+                        labelColor: Theme.of(context).primaryColor,
+                        unselectedLabelColor: Theme.of(context).iconTheme.color,
+                        indicatorColor: Theme.of(context).primaryColor,
+                        isScrollable: false,
+                        tabs: const [
+                          Tab(child: Text("Explora", textAlign: TextAlign.center)),
+                          Tab(child: Text("Categorías", textAlign: TextAlign.center)),
+                          Tab(child: Text("Géneros", textAlign: TextAlign.center)),
+                        ],
+                        labelPadding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      ),
+                    ),
+                    Expanded(
+                      child: Stack(
+                        children: [
+                          TabBarView(
+                            children: [
+                              buildContent(context, 0),
+                              buildContent(context, 1),
+                              buildContent(context, 2),
+                            ],
+                          ),
+                          if (_searchController.text.isNotEmpty && _searchResults.isNotEmpty)
+                            Positioned(
+                              top: 0,
+                              left: 0,
+                              right: 0,
+                              child: Container(
+                                color: const Color.fromARGB(144, 0, 0, 0),
+                                height: 200,
+                                child: Material(
+                                  color: Colors.transparent,
+                                  elevation: 5,
+                                  child: ListView.builder(
+                                    shrinkWrap: true,
+                                    itemCount: _searchResults.length,
+                                    itemBuilder: (context, index) {
+                                      final movie = _searchResults[index];
+                                      final moviesProvider = Provider.of<MoviesProvider>(context, listen: false);
+                                      final List<String> movieGenres = [];
+                                      final List<int> genreIds = List<int>.from(movie['genre_ids']);
+                                      for (var genreId in genreIds) {
+                                        final genreName = moviesProvider.genres[genreId] ?? 'Otros';
+                                        movieGenres.add(genreName);
+                                      }
+                                      return ListTile(
+                                        leading: Image.network(
+                                          movie['poster_path'] != null
+                                              ? 'https://image.tmdb.org/t/p/w92${movie['poster_path']}'
+                                              : 'https://via.placeholder.com/92x138?text=No+Image',
+                                          fit: BoxFit.cover,
+                                        ),
+                                        title: Text(movie['title'], style: const TextStyle(color: Colors.white)),
+                                        subtitle: Text(movie['release_date'], style: const TextStyle(color: Colors.white)),
+                                        onTap: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) => MovieDetailPage(
+                                                movie: movie,
+                                                showButton: true,
+                                                genreList: movieGenres,
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                      );
+                                    },
+                                  ),
+                                ),
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+          );
+      }
 }

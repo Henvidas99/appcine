@@ -41,6 +41,9 @@ dependencies:
   qr_flutter: ^4.1.0
   go_router: ^14.1.4
   provider: ^6.1.2
+  flutter_dash: ^1.0.0
+  back_button_interceptor: ^7.0.3
+  page_transition: ^2.1.0
 
 dev_dependencies:
   flutter_test:
@@ -62,6 +65,10 @@ flutter:
     - assets/logo.png
     - assets/fondo1.jpg
     - assets/fondo2.jpg
+    - assets/fondo3.jpg
+    - assets/fondo3.1.jpg
+    - assets/fondo4.jpg
+    - assets/fondo4.1.jpg
     - assets/hemo.png
     - assets/cinema.png
     - assets/palomitaCinta.png

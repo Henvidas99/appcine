@@ -121,7 +121,7 @@ class _SuccessScreenState extends State<SuccessScreen>
                       FadeTransition(
                         opacity: _fadeAnimation,
                         child: const Text(
-                          'Compra realizada con éxito',
+                          'Reserva realizada con éxito',
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 20,

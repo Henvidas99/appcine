@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dash/flutter_dash.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:the_movie_data_base/models/booking.dart';
 import 'package:the_movie_data_base/provider/booking_provider.dart';
@@ -27,7 +28,7 @@ class SummaryScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-         toolbarHeight: size *0.08,
+         toolbarHeight: size *0.06,
          title: const Center(
           child: Text(
             'Ticket', style: TextStyle(fontSize: 20, ),
@@ -35,76 +36,46 @@ class SummaryScreen extends StatelessWidget {
         ),
 
       ),
-      body: SafeArea(
-         child: Stack(
-        children: [
-        Column(
-          children:  [
-            SizedBox(
-              height: size * 0.80,
-              child: TicketsSummaryBox(selectedMovie: selectedMovie, selectedDate: selectedDate, selectedTime: selectedTime, selectedSeats: selectedSeats,),
+      body: SingleChildScrollView(
+        child: SafeArea(
+           child: Stack(
+          children: [
+          Column(
+            children:  [
+              SizedBox(
+                height: size * 0.80,
+                child: TicketsSummaryBox(selectedMovie: selectedMovie, selectedDate: selectedDate, selectedTime: selectedTime, selectedSeats: selectedSeats,),
+              ),
+              SizedBox(height: 60,
+                child: ConfirmBookingsButton(
+                  
+                    selectedMovie: selectedMovie,
+                    selectedDate: selectedDate,
+                    selectedTime: selectedTime,
+                    tickets: numTickets
+                  ),
+              )     
+            ],
+          ),
+           Positioned(
+              top: size * .556,
+              left: 15,
+              child: const Icon(Icons.circle, color: Color.fromRGBO(29, 29, 39, 1)),
             ),
-            SizedBox(
-              height: size * 0.08,
-              child: ConfirmBookingsButton(
-                  selectedMovie: selectedMovie,
-                  selectedDate: selectedDate,
-                  selectedTime: selectedTime,
-                  tickets: numTickets
-                ),
-            )     
-          ],
+            Positioned(
+              top: size * .556,
+              right: 15,
+              child: const Icon(Icons.circle, color: Color.fromRGBO(29, 29, 39, 1)),
+            ),
+        ],
+        
         ),
-         Positioned(
-            top: size * .628,
-            left: 15,
-            child: const Icon(Icons.circle, color: Color.fromRGBO(29, 29, 39, 1)),
-          ),
-          Positioned(
-            top: size * .628,
-            right: 15,
-            child: const Icon(Icons.circle, color: Color.fromRGBO(29, 29, 39, 1)),
-          ),
-      ],
-      
+            ),
       ),
-    ),
     );
   }
 }
 
-
-class _BackIconRow extends StatelessWidget {
-  const _BackIconRow();
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        const SizedBox(width: 15),
-        InkResponse(
-          radius: 25,
-          child: const Icon(Icons.arrow_back_sharp, size: 26),
-          onTap: () {
-            Navigator.of(context).pop();
-          },
-        ),
-
-        const SizedBox(width: 110),
-
-        //Title
-        const Center(
-          child: Text(
-            'Ticket', style: TextStyle(fontSize: 20, ),
-          ),
-        ),
-
-        const Spacer(),
-      ],
-    );
-  }
-}
 
 class TicketsSummaryBox extends StatelessWidget {
   final dynamic selectedMovie;
@@ -134,7 +105,7 @@ class TicketsSummaryBox extends StatelessWidget {
           child: Column(
             children: [
                   Container(
-                      height: (size.height - 20) * 0.40,
+                      height: (size.height - 40) * 0.40,
                       decoration: BoxDecoration(
                         borderRadius: const BorderRadius.vertical(top: Radius.circular(15.0)),
                         image: DecorationImage(
@@ -203,13 +174,18 @@ class TicketsSummaryBox extends StatelessWidget {
                       ],
                     ),
                     Padding(
-                      padding: const EdgeInsets.only(top:8.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: List.generate(37, (index) => const Text('- ', style: TextStyle(color: Colors.grey))),
-                      ),
+                    padding: const EdgeInsets.only(top: 20.0),
+                    child: Dash(
+                      direction: Axis.horizontal,
+                      length: size.width - 60,
+                      dashLength: 5,
+                      dashGap: 3,
+                      dashColor: const Color.fromARGB(255, 85, 67, 67),
                     ),
-                    Center(
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 10.0),
+                    child: Center(
                       child: QrImageView(
                         data: 'Película: ${selectedMovie['title']}, Fecha: $selectedDate, Hora: $selectedTime, Asientos: $selectedSeats ',
                         version: QrVersions.auto,
@@ -217,6 +193,7 @@ class TicketsSummaryBox extends StatelessWidget {
                         gapless: false,
                       ),
                     ),
+                  ),
                   ],
                 ),
         ),

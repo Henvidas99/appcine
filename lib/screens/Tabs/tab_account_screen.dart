@@ -1,10 +1,13 @@
+import 'package:back_button_interceptor/back_button_interceptor.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:the_movie_data_base/provider/account_provider.dart';
 import 'dart:convert';
 
 import 'package:the_movie_data_base/provider/booking_provider.dart';
+import 'package:the_movie_data_base/services/authentication.service.dart';
 
 class AccountService {
   static const String _keyAccountData = 'accountData';
@@ -29,11 +32,47 @@ class TabAccountScreen extends StatefulWidget {
 
 class _TabAccountScreenState extends State<TabAccountScreen> {
   Map<String, dynamic> _accountData = {};
+  DateTime? lastPressed;
 
   @override
   void initState() {
     super.initState();
     _loadAccountData();
+    BackButtonInterceptor.add(interceptor);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    BackButtonInterceptor.remove(interceptor);
+  }
+
+  bool interceptor(bool btnEvent, RouteInfo info) {
+    final now = DateTime.now();
+    if (lastPressed == null || now.difference(lastPressed!) > const Duration(seconds: 3)) {
+      lastPressed = now;
+      final snackBar = SnackBar(
+        backgroundColor: Colors.blueGrey,
+        margin: const EdgeInsets.only(bottom: 60.0, left: 40, right: 40),
+        content: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(60),
+          ),
+          child: const Center(
+            child: Text(
+              'Presiona nuevamente para salir',
+              style: TextStyle(color: Colors.white, fontSize: 14),
+            ),
+          ),
+        ),
+        duration: const Duration(seconds: 3),
+        behavior: SnackBarBehavior.floating,
+      );
+      // ignore: use_build_context_synchronously
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      return true;
+    }
+    return false;
   }
 
   Future<void> _loadAccountData() async {
@@ -43,7 +82,7 @@ class _TabAccountScreenState extends State<TabAccountScreen> {
     });
   }
 
-    ImageProvider<Object>? _getAvatarImage() {
+  ImageProvider<Object>? _getAvatarImage() {
     if (_accountData.containsKey('avatar') &&
         _accountData['avatar'] != null &&
         _accountData['avatar']['tmdb'] != null &&
@@ -51,23 +90,59 @@ class _TabAccountScreenState extends State<TabAccountScreen> {
       final String avatarPath = _accountData['avatar']['tmdb']['avatar_path'];
       return NetworkImage('https://image.tmdb.org/t/p/w500$avatarPath');
     } else {
-      return AssetImage('assets/logo.png');
+      return const AssetImage('assets/logo.png');
     }
   }
 
- @override
+  void _confirmLogout() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          content: const Text('¿Estás seguro de que deseas cerrar sesión?' ),
+          backgroundColor: Colors.blueGrey,
+          icon: Icon(Icons.logout),
+
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Cancelar', style: TextStyle(color:Color(0xFFE50914))),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('Cerrar sesión',style: TextStyle(color:Colors.blue)),
+              onPressed: () {
+                _logout();
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _logout() {
+    final accountProvider = Provider.of<AccountProvider>(context, listen: false);
+    accountProvider.removeAccount();
+    context.pushReplacement('/login');
+  }
+
+  @override
   Widget build(BuildContext context) {
     final bookings = Provider.of<BookingProvider>(context).bookings;
     final account = Provider.of<AccountProvider>(context).accounts;
+    final assetImage = Provider.of<AccountProvider>(context).image;
 
     return Scaffold(
       body: Stack(
         children: [
           Positioned.fill(
             child: Container(
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 image: DecorationImage(
-                  image: AssetImage('assets/fondo1.jpg'),
+                  image: assetImage,
                   fit: BoxFit.cover,
                 ),
               ),
@@ -79,28 +154,35 @@ class _TabAccountScreenState extends State<TabAccountScreen> {
               SizedBox(height: MediaQuery.of(context).padding.top),
               Padding(
                 padding: const EdgeInsets.all(18.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    CircleAvatar(
-                      radius: 60,
-                      backgroundImage: account[0].avatar, 
-                    ),
-                    const SizedBox(height: 20),
-                    Text(
-                      'ID: ${account[0].userId }',
-                      style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600),
-                    ),
-                    Text(
-                      'Nombre de usuario: ${account[0].username}',
-                      style: const TextStyle(color: Colors.white, fontSize: 16,fontWeight: FontWeight.w600),
-                    ),
-                    Text(
-                      'Nombre: ${account[0].name}',
-                      style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600),
-                    ),
-                  ],
-                ),
+                child: account.isNotEmpty
+                    ? Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          CircleAvatar(
+                            radius: 60,
+                            backgroundImage: account[0].avatar,
+                          ),
+                          const SizedBox(height: 20),
+                          Text(
+                            'ID: ${account[0].userId}',
+                            style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600),
+                          ),
+                          Text(
+                            'Nombre de usuario: ${account[0].username}',
+                            style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600),
+                          ),
+                          Text(
+                            'Nombre: ${account[0].name}',
+                            style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600),
+                          ),
+                        ],
+                      )
+                    : const Center(
+                        child: Text(
+                          'No hay datos de la cuenta disponibles',
+                          style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600),
+                        ),
+                      ),
               ),
               Container(
                 height: 60,
@@ -135,6 +217,14 @@ class _TabAccountScreenState extends State<TabAccountScreen> {
               ),
             ],
           ),
+          Positioned(
+            top: 40,
+            right: 10,
+            child: IconButton(
+              onPressed: _confirmLogout,
+              icon: const Icon(Icons.logout),
+            ),
+          )
         ],
       ),
     );
@@ -171,7 +261,7 @@ class BookingSummaryRow extends StatelessWidget {
               Expanded(
                 child: Container(
                   decoration: const BoxDecoration(
-                    color: Color.fromRGBO(173, 150, 150, 0.965),
+                    color: Color.fromRGBO(117, 102, 102, 0.8),
                     borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(15),
                       bottomLeft: Radius.circular(15),

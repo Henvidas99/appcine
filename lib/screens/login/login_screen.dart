@@ -100,6 +100,7 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
 
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       body: Stack(
         children: [
           Positioned.fill(
@@ -119,10 +120,10 @@ class _LoginScreenState extends State<LoginScreen> {
                 Image.asset(
                   'assets/palomitasLentesLogo.png',  
                   width: 250,
-                  height: 250,
+                  height: 100,
 
                 ),
-                const SizedBox(height: 36.0),
+                const SizedBox(height: 26.0),
                 Container(
                   width: MediaQuery.of(context).size.width,
                   decoration: BoxDecoration(
@@ -150,10 +151,11 @@ class _LoginScreenState extends State<LoginScreen> {
                     borderRadius: BorderRadius.circular(10.0),
                     border: Border.all(),
                   ),
-                  child: TextFormField(
+                  child: TextFormField(                
+                    obscuringCharacter: '*',
                     controller: _passwordController,
                     style: const TextStyle(color: Colors.white),
-                    decoration: InputDecoration(
+                    decoration: InputDecoration(              
                       filled: true,
                       fillColor: Colors.black.withOpacity(0.5),
                       prefixIcon: const Icon(Icons.lock, color: Color.fromARGB(255, 211, 205, 205)),
@@ -172,12 +174,13 @@ class _LoginScreenState extends State<LoginScreen> {
                     obscureText: _obscurePassword, 
                   ),
                 ),
-                const SizedBox(height: 16.0),
+                const SizedBox(height: 20.0),
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFFE50914),
+                      shape: RoundedRectangleBorder(borderRadius:  BorderRadius.circular(10.0)),
                       padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 42),
                       disabledBackgroundColor: const Color.fromARGB(255, 234, 115, 115),
                     ),
@@ -191,7 +194,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                             ),
                           )
-                        : const Text('Iniciar sesión', style: TextStyle(color: Colors.white)),
+                        : const Text('Iniciar sesión', style: TextStyle(color: Colors.white, fontSize: 16)),
                   ),
                 ),
               ],

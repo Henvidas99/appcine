@@ -61,15 +61,58 @@ Widget build(BuildContext context) {
           );
         } else {
           return SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
+            child: Stack(
               children: [
-                Stack(
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    Container(
-                      child: snapshot.data![0],
+                    Stack(
+                      children: [
+                        Container(
+                          child: snapshot.data![0],
+                        ),
+                      ],
                     ),
-                    Positioned(
+                    Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(10.0),
+                            child: GenreList(chipContents: widget.genreList),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(10.0),
+                            child: snapshot.data![1],
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                            child: snapshot.data![2],
+                          ),
+                          if (widget.showButton == true)
+                            Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+                              child: ElevatedButton(
+                                onPressed: () async {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => TabTicketScreen(selectedMovie: widget.movie),
+                                    ),
+                                  );
+                                  Provider.of<SeatSelectionProvider>(context, listen: false).clearSelectedSeats();
+                                },
+                                style: ElevatedButton.styleFrom(
+                                    fixedSize: const Size.fromHeight(50),
+                                    backgroundColor: const Color(0xFFE50914),
+                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
+                                child: const Text('Reservar Tiquetes', style: TextStyle(fontSize: 18, color: Colors.white)),
+                              ),
+                            ),
+                        ],
+                      ),
+                  ],
+                ),
+                Positioned(
                       top: 30,
                       child: BackButton(
                         color: Colors.white,
@@ -78,46 +121,7 @@ Widget build(BuildContext context) {
                         },
                       ),
                     ),
-                  ],
-                ),
-                Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(10.0),
-                        child: GenreList(chipContents: widget.genreList),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(10.0),
-                        child: snapshot.data![1],
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                        child: snapshot.data![2],
-                      ),
-                      if (widget.showButton == true)
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
-                          child: ElevatedButton(
-                            onPressed: () async {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => TabTicketScreen(selectedMovie: widget.movie),
-                                ),
-                              );
-                              Provider.of<SeatSelectionProvider>(context, listen: false).clearSelectedSeats();
-                            },
-                            style: ElevatedButton.styleFrom(
-                                fixedSize: const Size.fromHeight(50),
-                                backgroundColor: const Color(0xFFE50914),
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
-                            child: const Text('Reservar Tiquetes', style: TextStyle(fontSize: 18, color: Colors.white)),
-                          ),
-                        ),
-                    ],
-                  ),
-              ],
+              ],            
             ),
           );
         }

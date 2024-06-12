@@ -1,3 +1,4 @@
+import 'package:back_button_interceptor/back_button_interceptor.dart';
 import 'package:flutter/material.dart';
 import 'package:the_movie_data_base/models/seats.dart';
 import 'package:the_movie_data_base/screens/pages/summary_screen_page.dart';
@@ -28,6 +29,7 @@ class _TabTicketScreenState extends State<TabTicketScreen> {
   String? _selectedDate;
   final ApiService apiService = ApiService();
   late List<dynamic> allRecentData = [];
+  DateTime? lastPressed;
 
   @override
   void initState() {
@@ -35,8 +37,42 @@ class _TabTicketScreenState extends State<TabTicketScreen> {
     if (widget.selectedMovie != null) {
       _selectedMovie = widget.selectedMovie;
     }
+    BackButtonInterceptor.add(interceptor);
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+    BackButtonInterceptor.remove(interceptor);
+  }
+
+  bool interceptor(bool btnEvent, RouteInfo info){
+      final now = DateTime.now();
+      if(lastPressed == null || now.difference(lastPressed!) > const Duration(seconds: 3)){
+        lastPressed = now;
+      final snackBar = SnackBar(    
+          backgroundColor: Colors.blueGrey,
+          margin: const EdgeInsets.only(bottom: 60.0, left: 40, right: 40),
+          content: Container(
+              decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(60),
+              ),
+              child: const Center(
+                child: Text(
+                  'Presiona nuevamente para salir',
+                   style: TextStyle(color: Colors.white, fontSize: 14),
+                  ),
+              ),
+              ),
+              duration: const Duration(seconds: 3),
+              behavior: SnackBarBehavior.floating,
+            );
+            // ignore: use_build_context_synchronously
+          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+            return true;
+      }
+          return false;
+  }
 
   void _initializeSeats() {
     final moviesProvider = Provider.of<MoviesProvider>(context);

@@ -11,7 +11,6 @@ class AuthenticationService {
 
   Future<Account> login(String username, String password) async {
     try {
-      // Paso 1: Crear un token de solicitud
       final tokenResponse = await http.get(
         Uri.parse('$baseUrl/authentication/token/new?api_key=$apiKey'),
       );
@@ -23,7 +22,6 @@ class AuthenticationService {
       final tokenData = json.decode(tokenResponse.body);
       final requestToken = tokenData['request_token'];
 
-      // Paso 2: Validar el token de solicitud con el nombre de usuario y la contraseña
       final validateResponse = await http.post(
         Uri.parse('$baseUrl/authentication/token/validate_with_login?api_key=$apiKey'),
         headers: {'Content-Type': 'application/json'},
@@ -44,7 +42,6 @@ class AuthenticationService {
 
       final validateData = json.decode(validateResponse.body);
 
-      // Paso 3: Crear una sesión con el token de solicitud validado
       final sessionResponse = await http.post(
         Uri.parse('$baseUrl/authentication/session/new?api_key=$apiKey'),
         headers: {'Content-Type': 'application/json'},
@@ -76,6 +73,7 @@ class AuthenticationService {
             userId: accountData['id'].toString(), 
             username: accountData['username'], 
             name: accountData['username'], 
+            avatarPath: accountData['avatar']['tmdb']['avatar_path'] ?? "no avatar",
             avatar: getAvatarImage(accountData),
             
           );
@@ -86,6 +84,7 @@ class AuthenticationService {
       rethrow;
     }
   }
+
 
    ImageProvider<Object> getAvatarImage(accountData) {
     if (accountData.containsKey('avatar') &&
