@@ -67,81 +67,93 @@ class _MovieDatesWidgetState extends State<MovieDatesWidget> {
 
   @override
 Widget build(BuildContext context) {
-  return Column(
-    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-    children: [
-      const Text(
-        'Selecciona Fecha y Hora',
-        style: TextStyle(
-          color: Colors.white,
-          fontWeight: FontWeight.bold,
-          fontSize: 18,
-        ),
-      ),
-      SizedBox(
-        height: 100, 
-        child: ListView.builder(
-          scrollDirection: Axis.horizontal,
-          itemCount: listDates.length,
-          itemBuilder: (context, index) {
-            final date = listDates[index];
-            final isSelected = index == _selectedDateIndex;
+   final size = MediaQuery.of(context).size.height * 0.30;
 
-            return GestureDetector(
-              onTap: () {
-                setState(() {
-                  if (_selectedDateIndex == index) {
-                    _selectedDateIndex = -1; 
-                  } else {
-                    _selectedDateIndex = index;
-                  }
-                  notifySelection();
-                });
-              },
-              child: Container(
-                margin: const EdgeInsets.symmetric(horizontal: 8.0),
-                child: MovieDateCard(
-                  day: date['day']!,
-                  month: date['month']!,
-                  isSelected: isSelected,
-                ),
+  return Expanded(
+    child: Column(
+      children: [
+        SizedBox(
+          height: size * 0.10,
+          child: const Text(
+              'Selecciona Fecha y Hora',
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: 18,
               ),
-            );
-          },
+          ),
         ),
-      ),
-      SizedBox(
-        height: 50, 
-        child: ListView.builder(
-          scrollDirection: Axis.horizontal,
-          itemCount: listHours.length,
-          itemBuilder: (context, index) {
-            final hour = listHours[index];
-            final isSelected = index == _selectedTimeIndex;
-
-            return GestureDetector(
-              onTap: () {
-                setState(() {
-                  if (_selectedTimeIndex == index) {
-                    _selectedTimeIndex = -1;
-                  } else {
-                    _selectedTimeIndex = index;
-                  }
-                  notifySelection();
-                });
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical:12.0),
+          child: SizedBox(
+            height: size * 0.50, 
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: listDates.length,
+              itemBuilder: (context, index) {
+                final date = listDates[index];
+                final isSelected = index == _selectedDateIndex;
+              
+                return GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      if (_selectedDateIndex == index) {
+                        _selectedDateIndex = -1; 
+                      } else {
+                        _selectedDateIndex = index;
+                      }
+                      notifySelection();
+                    });
+                  },
+                  child: Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 8.0),
+                    child: MovieDateCard(
+                      day: date['day']!,
+                      month: date['month']!,
+                      isSelected: isSelected,
+                    ),
+                  ),
+                );
               },
-              child: Container(
-                margin: const EdgeInsets.symmetric(horizontal: 8.0),
-                child: MovieHourCard(
-                  hour: hour,
-                  isSelected: isSelected,
-                ),
-              ),
-            );
-          },
+            ),
+          ),
         ),
-      ),
-    ],
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8.0),
+          child: SizedBox(
+            height: size * 0.15, 
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: listHours.length,
+              itemBuilder: (context, index) {
+                final hour = listHours[index];
+                final isSelected = index == _selectedTimeIndex;
+              
+                return GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      if (_selectedTimeIndex == index) {
+                        _selectedTimeIndex = -1;
+                      } else {
+                        _selectedTimeIndex = index;
+                      }
+                      notifySelection();
+                    });
+                  },
+                  child: Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: MovieHourCard(
+                      hour: hour,
+                      isSelected: isSelected,
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+        ),
+      ],
+    ),
   );
 }
 }
@@ -160,11 +172,11 @@ class MovieDateCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorContainer = isSelected ? const Color(0xFFE50914) : Colors.black12    ;
+    final colorContainer = isSelected ? const Color(0xFFE50914) : Colors.black26   ;
     final colorText = isSelected ? Colors.black : Colors.grey;
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10.0),
+      padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 4),
       child: Container(
         width: 55, 
         decoration: BoxDecoration(
@@ -182,7 +194,6 @@ class MovieDateCard extends StatelessWidget {
               ),
             ),
             Container(
-              margin: const EdgeInsets.only(top: 8.0),
               height: 40,
               width: 40,
               decoration: const BoxDecoration(
@@ -223,11 +234,11 @@ class MovieHourCard extends StatelessWidget {
     final colorBorder = isSelected ? const Color(0xFFE50914) : Colors.transparent;
 
     return Container(
-      margin: const EdgeInsets.symmetric(vertical: 4.0),
-      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+      margin: const EdgeInsets.symmetric(vertical: 2.0),
+      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 2.0),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
-        color: Colors.black12,
+        color: Colors.black26,
         border: Border.all(
           color: colorBorder,
         ),
@@ -237,7 +248,7 @@ class MovieHourCard extends StatelessWidget {
           hour,
           style: TextStyle(
             color: colorText,
-            fontSize: 13,
+            fontSize: 16,
           ),
         ),
       ),

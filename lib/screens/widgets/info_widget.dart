@@ -62,7 +62,7 @@ String _getLanguageName(String languageCode) {
 Widget _buildOverview() {
   final String? overview = widget.movie['overview'];
   final bool hasValidOverview = overview != null && overview.isNotEmpty;
-  const int maxOverviewLength = 225;
+  const int maxOverviewLength = 250;
   final bool isTruncated = hasValidOverview && overview.length >= maxOverviewLength;
 
   return Column(

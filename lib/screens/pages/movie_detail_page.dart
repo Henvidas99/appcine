@@ -45,85 +45,79 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: FutureBuilder(
-        future: _loadMovieDetails(),
-        builder: (context, AsyncSnapshot<List<Widget>> snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(
-              child: Text('Error loading movie details: ${snapshot.error}'),
-            );
-          } else {
-            return SingleChildScrollView(
-              child: Stack(
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Stack(
-                        children: [
-                          Container(
-                            child: snapshot.data![0],
-                          ),
-                        ],
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.all(10.0),
-                            child: GenreList(chipContents: widget.genreList),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(10.0),
-                            child: snapshot.data![1],
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                            child: snapshot.data![2],
-                          ),
-                          if (widget.showButton == true)
-                            Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
-                              child: ElevatedButton(
-                                onPressed: () async {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => TabTicketScreen(selectedMovie: widget.movie),
-                                    ),
-                                  );
-                                  Provider.of<SeatSelectionProvider>(context, listen: false).clearSelectedSeats();
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  fixedSize: const Size.fromHeight(50),
-                                  backgroundColor: const Color(0xFFE50914),
-                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
-                                child: const Text('Reservar Tiquetes', style: TextStyle(fontSize: 18, color: Colors.white)),
-                              ),
-                            ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  Positioned(
-                    top: 30,
-                    child: IconButton(
-                      icon: Icon(Icons.arrow_back, color: Colors.white),
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
+ Widget build(BuildContext context) {
+  final size = MediaQuery.of(context).size.height;
+
+  return Scaffold(
+    body: FutureBuilder(
+      future: _loadMovieDetails(),
+      builder: (context, AsyncSnapshot<List<Widget>> snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          return Center(
+            child: Text('Error loading movie details: ${snapshot.error}'),
+          );
+        } else {
+          return Stack(
+            children: [
+              SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    SizedBox(
+                      height: size * 0.30,
+                      child: snapshot.data![0], // Primer widget del snapshot
                     ),
-                  ),
-                ],
+                    Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: GenreList(chipContents: widget.genreList),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: snapshot.data![1], // Segundo widget del snapshot
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: snapshot.data![2], // Tercer widget del snapshot
+                    ),
+                    if (widget.showButton == true)
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+                        child: ElevatedButton(
+                          onPressed: () async {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => TabTicketScreen(selectedMovie: widget.movie),
+                              ),
+                            );
+                            Provider.of<SeatSelectionProvider>(context, listen: false).clearSelectedSeats();
+                          },
+                          style: ElevatedButton.styleFrom(
+                            fixedSize: const Size.fromHeight(50),
+                            backgroundColor: const Color(0xFFE50914),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
+                          child: const Text('Reservar Tiquetes', style: TextStyle(fontSize: 18, color: Colors.white)),
+                        ),
+                      ),
+                  ],
+                ),
               ),
-            );
-          }
-        },
-      ),
-    );
-  }
+              Positioned(
+                top: 40,
+                child: IconButton(
+                  icon: const Icon(Icons.arrow_back, color: Colors.white, size: 30,),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ),
+            ],
+          );
+        }
+      },
+    ),
+  );
+}
 }

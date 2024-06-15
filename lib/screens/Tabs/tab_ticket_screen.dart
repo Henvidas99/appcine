@@ -190,6 +190,7 @@ class _TabTicketScreenState extends State<TabTicketScreen> {
   Widget build(BuildContext context) {
     final seatSelectionProvider = Provider.of<SeatSelectionProvider>(context);
     final moviesProvider = Provider.of<MoviesProvider>(context);
+    final size = MediaQuery.of(context).size.height;
 
     saveSelectedSeats(seatSelectionProvider.selectedSeats);
 
@@ -199,120 +200,122 @@ class _TabTicketScreenState extends State<TabTicketScreen> {
     bool isButtonEnabled = _selectedMovie != null && _selectedDate != null && _selectedTime != null && seatSelectionProvider.selectedSeats.isNotEmpty;
 
     return Scaffold(
-  appBar: AppBar(
-    backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
-    title: Center(
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: Text(
-          _selectedMovie != null ? _selectedMovie['title'] : 'Seleccionar Película',
-          style: const TextStyle(fontSize: 18, color: Colors.white, fontWeight: FontWeight.bold),
-        ),
-      ),
-    ),
-  ),
-  body: Container(
-    color: const Color.fromRGBO(29, 29, 39, 1), 
-    child: Column(
-      children: [
-        if (_selectedMovie == null)
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8.0),
-              child: _buildMovieSelection(),
-            ),
-          )
-        else
-          Expanded(
-            child: Column(
-              children: [
-                Container(
-                  height: 220, 
-                  color: const Color.fromRGBO(29, 29, 39, 1),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8.0),
-                    child: _buildTimeSelection(),
-                  ),
-                ),
-                Expanded(
-                  child: Container(
-                    decoration: const BoxDecoration(
-                      color: Color.fromRGBO(38, 39, 48, 1),
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(50),
-                        topRight: Radius.circular(50),
-                      ),
-                    ),
-                    // Color diferente para identificación
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 4.0),
-                      child: Column(
-                        children: [
-                          Expanded(
-                            child: _buildSeatSelection(),
-                          ),
-                          if(_selectedDate != null && _selectedTime != null)
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    const Text(
-                                      'Precio total',
-                                      style: TextStyle(fontSize: 12, color: Colors.white),
-                                    ),
-                                    Text(
-                                      '₡ ${(seatSelectionProvider.selectedSeats.length) * 5000}',
-                                      style: const TextStyle(fontSize: 18, color: Colors.white),
-                                    ),
-                                  ],
-                                ),
-                                ElevatedButton(
-                                  onPressed: isButtonEnabled
-                                      ? () {
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) => SummaryScreen(
-                                                selectedMovie: _selectedMovie,
-                                                selectedMovieTitle: _selectedMovie['title'],
-                                                selectedMoviePoster:  _selectedMovie['poster_path'],
-                                                selectedDate: _selectedDate!,
-                                                selectedTime: _selectedTime!,
-                                                selectedSeats: seatSelectionProvider.selectedSeats, 
-                                              ),
-                                            ),
-                                          );
-                                        }
-                                      : null,
-                                  style: ButtonStyle(
-                                    backgroundColor: MaterialStateProperty.all(const Color(0xFFE50914)),
-                                    foregroundColor: MaterialStateProperty.resolveWith<Color>((Set<MaterialState> states) {
-                                      if (states.contains(MaterialState.disabled)) {
-                                      return Colors.grey; // Color del texto cuando el botón está deshabilitado
-                                    }
-                                      return Colors.white; // Color del texto cuando el botón está habilitado
-                                  }),
-                                ),
-                                  child: const Text('Reservar Tiquetes', style: TextStyle(fontSize: 18)),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ],
+      appBar: AppBar(
+        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
+        toolbarHeight: size * 0.08,
+        title: Center(
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Text(
+              _selectedMovie != null ? _selectedMovie['title'] : 'Seleccionar Película',
+              style: const TextStyle(fontSize: 18, color: Colors.white, fontWeight: FontWeight.bold),
             ),
           ),
-      ],
+        ),
+      ),
+    body: Container(
+      color: const Color.fromRGBO(29, 29, 39, 1), 
+      child: Column(
+        children: [
+          if (_selectedMovie == null)
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: _buildMovieSelection(),
+              ),
+            )
+          else
+            Expanded(
+              child: Column(
+                children: [
+                  Container(
+                    height: size * 0.30, 
+                    color: const Color.fromRGBO(29, 29, 39, 1),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8.0),
+                      child: _buildTimeSelection(),
+                    ),
+                  ),
+                  Expanded(
+                    child: Container(
+                      height: size * 0.62, 
+                      decoration: const BoxDecoration(
+                        color: Color.fromRGBO(38, 39, 48, 1),
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(50),
+                          topRight: Radius.circular(50),
+                        ),
+                      ),
+                      // Color diferente para identificación
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 4.0),
+                        child: Column(
+                          children: [
+                            Expanded(
+                              child: _buildSeatSelection(),
+                            ),
+                            if(_selectedDate != null && _selectedTime != null)
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      const Text(
+                                        'Precio total',
+                                        style: TextStyle(fontSize: 12, color: Colors.white),
+                                      ),
+                                      Text(
+                                        '₡ ${(seatSelectionProvider.selectedSeats.length) * 5000}',
+                                        style: const TextStyle(fontSize: 18, color: Colors.white),
+                                      ),
+                                    ],
+                                  ),
+                                  ElevatedButton(
+                                    onPressed: isButtonEnabled
+                                        ? () {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) => SummaryScreen(
+                                                  selectedMovie: _selectedMovie,
+                                                  selectedMovieTitle: _selectedMovie['title'],
+                                                  selectedMoviePoster:  _selectedMovie['poster_path'],
+                                                  selectedDate: _selectedDate!,
+                                                  selectedTime: _selectedTime!,
+                                                  selectedSeats: seatSelectionProvider.selectedSeats, 
+                                                ),
+                                              ),
+                                            );
+                                          }
+                                        : null,
+                                    style: ButtonStyle(
+                                      backgroundColor: MaterialStateProperty.all(const Color(0xFFE50914)),
+                                      foregroundColor: MaterialStateProperty.resolveWith<Color>((Set<MaterialState> states) {
+                                        if (states.contains(MaterialState.disabled)) {
+                                        return Colors.grey; // Color del texto cuando el botón está deshabilitado
+                                      }
+                                        return Colors.white; // Color del texto cuando el botón está habilitado
+                                    }),
+                                  ),
+                                    child: const Text('Reservar Tiquetes', style: TextStyle(fontSize: 18)),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+        ],
+      ),
     ),
-  ),
 );
 }
 
