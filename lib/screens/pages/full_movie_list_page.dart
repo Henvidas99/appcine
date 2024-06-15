@@ -37,7 +37,8 @@ Widget build(BuildContext context) {
             child: GestureDetector(
               onTap: () {  Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => MovieDetailPage(movie:item, showButton: title == 'Estrenos' ? true : false, genreList: movieGenres,)),
+                MaterialPageRoute(builder: (context) => MovieDetailPage(movie:item, showButton: title == 'Estrenos' ? true : false, genreList: movieGenres,
+                )),
               );
             },
               child: Container(

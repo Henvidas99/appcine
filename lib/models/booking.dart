@@ -6,6 +6,7 @@ class Booking {
   final String time;
   final double price;
   final int numTickets;
+  final List<String> seats;
 
   const Booking({
     required this.movieTitle, 
@@ -13,7 +14,8 @@ class Booking {
     required this.date,
     required this.time, 
     required this.price,
-    required this.numTickets,
+    required this.numTickets, 
+    required this.seats,
 
   });
 }

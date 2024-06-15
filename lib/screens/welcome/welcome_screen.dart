@@ -38,6 +38,7 @@ class _LoadContentState extends State<LoadContent> {
     if (index == 1) {
       Provider.of<SeatSelectionProvider>(context, listen: false).clearSelectedSeats();
     }
+
   }
 
   @override

@@ -26,6 +26,7 @@ class _TabHomeScreenState extends State<TabHomeScreen> {
   DateTime? lastPressed;
 
 
+
   @override
   void initState() {
     super.initState();
@@ -39,33 +40,36 @@ class _TabHomeScreenState extends State<TabHomeScreen> {
     BackButtonInterceptor.remove(interceptor);
   }
 
-  bool interceptor(bool btnEvent, RouteInfo info){
-      final now = DateTime.now();
-      if(lastPressed == null || now.difference(lastPressed!) > const Duration(seconds: 3)){
+  
+   bool interceptor(bool btnEvent, RouteInfo info) {
+    if (BackButtonInterceptor.getCurrentNavigatorRouteName(context) != '/') return false;
+    final now = DateTime.now();
+    // Check if the current route is TabHomeScreen
+      if (lastPressed == null || now.difference(lastPressed!) > const Duration(seconds: 3)) {
         lastPressed = now;
-      final snackBar = SnackBar(    
+        final snackBar = SnackBar(
           backgroundColor: Colors.blueGrey,
           margin: const EdgeInsets.only(bottom: 60.0, left: 40, right: 40),
           content: Container(
-              decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(60),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(60),  
+            ),
+            child: const Center(
+              child: Text(
+                'Presiona nuevamente para salir',
+                style: TextStyle(color: Colors.white, fontSize: 14),
               ),
-              child: const Center(
-                child: Text(
-                  'Presiona nuevamente para salir',
-                   style: TextStyle(color: Colors.white, fontSize: 14),
-                  ),
-              ),
-              ),
-              duration: const Duration(seconds: 3),
-              behavior: SnackBarBehavior.floating,
-            );
-            // ignore: use_build_context_synchronously
-          ScaffoldMessenger.of(context).showSnackBar(snackBar);
-            return true;
+            ),
+          ),
+          duration: const Duration(seconds: 3),
+          behavior: SnackBarBehavior.floating,
+        );
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+        return true;
       }
-          return false;
+    return false;
   }
+
 
   Future<void> _fetchData() async {
     try {
@@ -368,7 +372,8 @@ class _TabHomeScreenState extends State<TabHomeScreen> {
                       builder: (context) => MovieDetailPage(
                         movie: item,
                         genreList: movieGenres,
-                        showButton: title == 'Estrenos' ? true : false,
+                        showButton: title == 'Estrenos' ? true : false, 
+                      
                       ),
                     ),
                   );
@@ -673,4 +678,5 @@ class _TabHomeScreenState extends State<TabHomeScreen> {
               ),
           );
       }
+
 }

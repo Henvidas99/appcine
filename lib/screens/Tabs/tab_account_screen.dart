@@ -5,9 +5,9 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:the_movie_data_base/provider/account_provider.dart';
 import 'dart:convert';
-
 import 'package:the_movie_data_base/provider/booking_provider.dart';
-import 'package:the_movie_data_base/services/authentication.service.dart';
+import 'package:the_movie_data_base/screens/pages/summary_screen_page.dart';
+
 
 class AccountService {
   static const String _keyAccountData = 'accountData';
@@ -48,6 +48,7 @@ class _TabAccountScreenState extends State<TabAccountScreen> {
   }
 
   bool interceptor(bool btnEvent, RouteInfo info) {
+    if (BackButtonInterceptor.getCurrentNavigatorRouteName(context) != '/') return false;
     final now = DateTime.now();
     if (lastPressed == null || now.difference(lastPressed!) > const Duration(seconds: 3)) {
       lastPressed = now;
@@ -201,15 +202,27 @@ class _TabAccountScreenState extends State<TabAccountScreen> {
                   separatorBuilder: (_, i) => const SizedBox(height: 20),
                   itemBuilder: (_, i) {
                     final booking = bookings[bookings.length - 1 - i]; // Accede a los elementos en orden inverso
+                    final seats = booking.seats;
                     final imageUrl = booking.posterUrl;
                     return Padding(
                       padding: const EdgeInsets.all(18.0),
+                       child: GestureDetector(
+                        onTap: () {
+                           Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => SummaryScreen(selectedMovieTitle: booking.movieTitle, selectedMoviePoster: booking.posterUrl,
+                                selectedDate: booking.date, selectedTime: booking.time, selectedSeats: seats),
+                            ),
+                          );
+                        },
                       child: BookingSummaryRow(
                         title: booking.movieTitle,
                         poster: 'https://image.tmdb.org/t/p/w500$imageUrl',
                         dateTime: '${booking.date}, ${booking.time}',
                         totalPrice: booking.price,
                         noOfTickets: booking.numTickets,
+                      ),
                       ),
                     );
                   },

@@ -1,5 +1,6 @@
 import 'package:back_button_interceptor/back_button_interceptor.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:the_movie_data_base/models/seats.dart';
 import 'package:the_movie_data_base/screens/pages/summary_screen_page.dart';
 import 'package:the_movie_data_base/screens/widgets/movie_billboard_widget.dart';
@@ -47,6 +48,16 @@ class _TabTicketScreenState extends State<TabTicketScreen> {
   }
 
   bool interceptor(bool btnEvent, RouteInfo info){
+    if (BackButtonInterceptor.getCurrentNavigatorRouteName(context) != '/') {
+      return false;
+     }
+    else if ( _selectedMovie != null) {
+     setState(() {
+          _selectedMovie = null;
+      });
+    return true;
+    }  
+    else{
       final now = DateTime.now();
       if(lastPressed == null || now.difference(lastPressed!) > const Duration(seconds: 3)){
         lastPressed = now;
@@ -71,7 +82,9 @@ class _TabTicketScreenState extends State<TabTicketScreen> {
           ScaffoldMessenger.of(context).showSnackBar(snackBar);
             return true;
       }
+     }
           return false;
+     
   }
 
   void _initializeSeats() {
@@ -168,11 +181,18 @@ class _TabTicketScreenState extends State<TabTicketScreen> {
     });
   }
 
+  Future<void> saveSelectedSeats(List<String> seats) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setStringList('selectedSeats', seats);
+  }
 
   @override
   Widget build(BuildContext context) {
     final seatSelectionProvider = Provider.of<SeatSelectionProvider>(context);
     final moviesProvider = Provider.of<MoviesProvider>(context);
+
+    saveSelectedSeats(seatSelectionProvider.selectedSeats);
+
     allRecentData = moviesProvider.recentMoviesData;
     _initializeSeats();
 
@@ -258,9 +278,11 @@ class _TabTicketScreenState extends State<TabTicketScreen> {
                                             MaterialPageRoute(
                                               builder: (context) => SummaryScreen(
                                                 selectedMovie: _selectedMovie,
+                                                selectedMovieTitle: _selectedMovie['title'],
+                                                selectedMoviePoster:  _selectedMovie['poster_path'],
                                                 selectedDate: _selectedDate!,
                                                 selectedTime: _selectedTime!,
-                                                selectedSeats: seatSelectionProvider.selectedSeats,
+                                                selectedSeats: seatSelectionProvider.selectedSeats, 
                                               ),
                                             ),
                                           );

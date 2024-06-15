@@ -99,7 +99,7 @@ class _SuccessScreenState extends State<SuccessScreen>
                   height: _sizeAnimation.value * MediaQuery.of(context).size.height,
                   width: MediaQuery.of(context).size.width,
                   child: Container(
-                    color: Colors.red,
+                    color: Colors.green,
                   ),
                 ),
               ),

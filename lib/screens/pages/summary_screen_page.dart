@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dash/flutter_dash.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:the_movie_data_base/models/booking.dart';
 import 'package:the_movie_data_base/provider/booking_provider.dart';
 import 'package:the_movie_data_base/screens/pages/success_screen_page.dart';
@@ -9,16 +10,20 @@ import 'package:the_movie_data_base/provider/seat_selection_provider.dart';
 
 class SummaryScreen extends StatelessWidget {
   final dynamic selectedMovie;
+  final dynamic selectedMoviePoster;
+  final dynamic selectedMovieTitle;
   final String selectedDate;
   final String selectedTime;
   final List<String> selectedSeats;
 
   const SummaryScreen({
     super.key,
-    required this.selectedMovie,
+    this.selectedMoviePoster,
     required this.selectedDate,
     required this.selectedTime, 
-    required this.selectedSeats,
+    required this.selectedSeats, 
+    this.selectedMovieTitle, 
+    this.selectedMovie,
   });
 
   @override
@@ -26,6 +31,7 @@ class SummaryScreen extends StatelessWidget {
     final size = MediaQuery.of(context).size.height;
     final numTickets = selectedSeats.length;
 
+   
     return Scaffold(
       appBar: AppBar(
          toolbarHeight: size *0.06,
@@ -44,15 +50,16 @@ class SummaryScreen extends StatelessWidget {
             children:  [
               SizedBox(
                 height: size * 0.80,
-                child: TicketsSummaryBox(selectedMovie: selectedMovie, selectedDate: selectedDate, selectedTime: selectedTime, selectedSeats: selectedSeats,),
+                child: TicketsSummaryBox(selectedMoviePoster: selectedMoviePoster, selectedMovieTitle: selectedMovieTitle, selectedDate: selectedDate, selectedTime: selectedTime, selectedSeats: selectedSeats,),
               ),
+              if(selectedMovie != null)
               SizedBox(height: 60,
-                child: ConfirmBookingsButton(
-                  
+                child: ConfirmBookingsButton(        
                     selectedMovie: selectedMovie,
                     selectedDate: selectedDate,
                     selectedTime: selectedTime,
-                    tickets: numTickets
+                    tickets: numTickets,
+                    selectedSeats: selectedSeats,
                   ),
               )     
             ],
@@ -78,17 +85,19 @@ class SummaryScreen extends StatelessWidget {
 
 
 class TicketsSummaryBox extends StatelessWidget {
-  final dynamic selectedMovie;
+  final dynamic selectedMoviePoster;
+  final dynamic selectedMovieTitle;
   final String selectedDate;
   final String selectedTime;
   final List<String> selectedSeats;
 
   const TicketsSummaryBox({
     super.key,
-    required this.selectedMovie,
+    required this.selectedMoviePoster,
     required this.selectedDate,
     required this.selectedTime, 
-    required this.selectedSeats,
+    required this.selectedSeats, 
+    required this.selectedMovieTitle,
   });
 
   @override
@@ -109,7 +118,7 @@ class TicketsSummaryBox extends StatelessWidget {
                       decoration: BoxDecoration(
                         borderRadius: const BorderRadius.vertical(top: Radius.circular(15.0)),
                         image: DecorationImage(
-                          image: NetworkImage('https://image.tmdb.org/t/p/w500${selectedMovie['poster_path']}'),
+                          image: NetworkImage('https://image.tmdb.org/t/p/w500$selectedMoviePoster'),
                           fit: BoxFit.cover,
                         ),
                       ),
@@ -187,9 +196,9 @@ class TicketsSummaryBox extends StatelessWidget {
                     padding: const EdgeInsets.only(top: 10.0),
                     child: Center(
                       child: QrImageView(
-                        data: 'Película: ${selectedMovie['title']}, Fecha: $selectedDate, Hora: $selectedTime, Asientos: $selectedSeats ',
+                        data: 'Película: $selectedMovieTitle, Fecha: $selectedDate, Hora: $selectedTime, Asientos: $selectedSeats ',
                         version: QrVersions.auto,
-                        size: 130.0,
+                        size: (size.height - 80) * 0.20,
                         gapless: false,
                       ),
                     ),
@@ -201,19 +210,45 @@ class TicketsSummaryBox extends StatelessWidget {
   }
 }
 
-class ConfirmBookingsButton extends StatelessWidget {
+class ConfirmBookingsButton extends StatefulWidget {
   final dynamic selectedMovie;
   final String selectedDate;
   final String selectedTime;
   final int tickets;
+  final List<String> selectedSeats;
 
   const ConfirmBookingsButton({
     super.key,
     required this.selectedMovie,
     required this.selectedDate,
     required this.selectedTime,
-    required this.tickets,
+    required this.tickets, 
+    required this.selectedSeats,
   });
+
+
+  @override
+  // ignore: library_private_types_in_public_api
+  _ConfirmBookingButtonState createState() => _ConfirmBookingButtonState();
+
+}
+  class _ConfirmBookingButtonState extends State<ConfirmBookingsButton> {
+    List<String> seats = [];
+
+    @override
+  void initState() {
+    super.initState();
+    getSeats();
+  }
+
+  Future<void> getSeats() async {
+    final prefs = await SharedPreferences.getInstance();
+    final savedSeats =  prefs.getStringList('selectedSeats');
+    setState(() {
+          seats = savedSeats ?? [];
+    });
+
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -221,20 +256,24 @@ class ConfirmBookingsButton extends StatelessWidget {
 
     return ElevatedButton(
         onPressed: () {
-          final seatSelectionProvider = Provider.of<SeatSelectionProvider>(context, listen: false);
-          seatSelectionProvider.reserveSeats(selectedMovie['id'].toString(), selectedDate, selectedTime);
+           final seatSelectionProvider = Provider.of<SeatSelectionProvider>(context, listen: false);
+          seatSelectionProvider.reserveSeats(widget.selectedMovie['id'].toString(), widget.selectedDate, widget.selectedTime);
 
           final booking = Booking(
-            movieTitle: selectedMovie['title'],
-            posterUrl: selectedMovie['backdrop_path'],
-            date: selectedDate,
-            time: selectedTime,
-            price: tickets * 5000,
-            numTickets: tickets,
+            movieTitle: widget.selectedMovie['title'],
+            posterUrl: widget.selectedMovie['poster_path'],
+            date: widget.selectedDate,
+            time: widget.selectedTime,
+            price: widget.tickets * 5000,
+            numTickets: widget.tickets,
+            seats: seats
           );
 
            final bookingProvider = Provider.of<BookingProvider>(context, listen: false);
            bookingProvider.addBooking(booking);
+
+
+          
 
           Navigator.of(context).push(
             MaterialPageRoute(builder: (context) => const SuccessScreen()),
@@ -261,4 +300,6 @@ class ConfirmBookingsButton extends StatelessWidget {
 
     );
   }
+
+  
 }
