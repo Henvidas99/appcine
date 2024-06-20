@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:the_movie_data_base/models/booking.dart';
 import 'package:the_movie_data_base/provider/account_provider.dart';
 import 'dart:convert';
 import 'package:the_movie_data_base/provider/booking_provider.dart';
@@ -102,7 +103,6 @@ class _TabAccountScreenState extends State<TabAccountScreen> {
         return AlertDialog(
           content: const Text('¿Estás seguro de que deseas cerrar sesión?' ),
           backgroundColor: Colors.blueGrey,
-          icon: Icon(Icons.logout),
 
           actions: <Widget>[
             TextButton(
@@ -111,7 +111,8 @@ class _TabAccountScreenState extends State<TabAccountScreen> {
                 Navigator.of(context).pop();
               },
             ),
-            TextButton(
+            FilledButton(
+              style: ButtonStyle(backgroundColor: MaterialStatePropertyAll(Colors.blue[200])),
               child: const Text('Cerrar sesión',style: TextStyle(color:Colors.blue)),
               onPressed: () {
                 _logout();
@@ -132,116 +133,226 @@ class _TabAccountScreenState extends State<TabAccountScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final bookings = Provider.of<BookingProvider>(context).bookings;
-    final account = Provider.of<AccountProvider>(context).accounts;
-    final assetImage = Provider.of<AccountProvider>(context).image;
+  final bookings = Provider.of<BookingProvider>(context).bookings;
+  final account = Provider.of<AccountProvider>(context).accounts;
+  final assetImage = Provider.of<AccountProvider>(context).image;
+  List<Booking> userBookings;
 
-    return Scaffold(
-      body: Stack(
-        children: [
-          Positioned.fill(
-            child: Container(
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: assetImage,
-                  fit: BoxFit.cover,
-                ),
+  if(account.isNotEmpty){
+    userBookings = bookings.where((booking) => booking.userId == account[0].userId).toList();
+  }
+
+  else{
+    userBookings =[];
+  }
+
+  return Scaffold(
+    body: Stack(
+      children: [
+        Positioned.fill(
+          child: Container(
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: assetImage,
+                fit: BoxFit.cover,
               ),
             ),
           ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              SizedBox(height: MediaQuery.of(context).padding.top),
-              Padding(
-                padding: const EdgeInsets.all(18.0),
-                child: account.isNotEmpty
-                    ? Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          CircleAvatar(
-                            radius: 60,
-                            backgroundImage: account[0].avatar,
-                          ),
-                          const SizedBox(height: 20),
-                          Text(
-                            'ID: ${account[0].userId}',
-                            style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600),
-                          ),
-                          Text(
-                            'Nombre de usuario: ${account[0].username}',
-                            style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600),
-                          ),
-                          Text(
-                            'Nombre: ${account[0].name}',
-                            style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600),
-                          ),
-                        ],
-                      )
-                    : const Center(
-                        child: Text(
-                          'No hay datos de la cuenta disponibles',
-                          style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600),
+        ),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            SizedBox(height: MediaQuery.of(context).padding.top),
+            Padding(
+              padding: const EdgeInsets.all(18.0),
+              child: account.isNotEmpty
+                  ? Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        const Column(
+                          children: [
+                            Text('Mi Perfil', style: TextStyle(fontSize: 16),),
+                          ],
+                        ),
+                        const SizedBox(height: 20,),
+                        CircleAvatar(
+                          radius: 60,
+                          backgroundImage: account[0].avatar,
+                        ),
+                        const SizedBox(height: 20),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            Expanded(
+                              child: Column(
+                                children: [
+                                  const Text(
+                                    'Usuario',
+                                    style: TextStyle(
+                                      color: Color.fromARGB(255, 229, 0, 0),
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                  Text(
+                                    account[0].username,
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                    softWrap: true,
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Expanded(
+                              child: Column(
+                                children: [
+                                  const Text(
+                                    'Nombre',
+                                    style: TextStyle(
+                                      color: Color.fromARGB(255, 229, 0, 0),
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                  Text(
+                                    account[0].name,
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                    softWrap: true,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    )
+                  : const Center(
+                      child: Text(
+                        'No hay datos de la cuenta disponibles',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
-              ),
-              Container(
+                    ),
+            ),
+             Padding(
+               padding: const EdgeInsets.only(top:8.0),
+               child: Container(
                 height: 60,
                 width: MediaQuery.of(context).size.width,
-                decoration: const BoxDecoration(
-                  color: Color.fromARGB(255, 179, 94, 94),
+                decoration: BoxDecoration(
+                  color: Color.fromRGBO(155, 0, 0, 0.4),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.2),
+                      spreadRadius: 3,
+                      blurRadius: 3,
+                    ),
+                  ],
                 ),
                 child: const Center(
-                  child: Text('Historial de reservas', style: TextStyle(fontSize: 20)),
+                  child: Text(
+                    'Historial de reservas',
+                    style: TextStyle(
+                      fontSize: 20,
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ),
-              ),
-              Expanded(
-                child: ListView.separated(
-                  physics: const BouncingScrollPhysics(),
-                  itemCount: bookings.length,
-                  separatorBuilder: (_, i) => const SizedBox(height: 20),
-                  itemBuilder: (_, i) {
-                    final booking = bookings[bookings.length - 1 - i]; // Accede a los elementos en orden inverso
-                    final seats = booking.seats;
-                    final imageUrl = booking.posterUrl;
-                    return Padding(
-                      padding: const EdgeInsets.all(18.0),
-                       child: GestureDetector(
-                        onTap: () {
-                           Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => SummaryScreen(selectedMovieTitle: booking.movieTitle, selectedMoviePoster: booking.posterUrl,
-                                selectedDate: booking.date, selectedTime: booking.time, selectedSeats: seats),
+                           ),
+             ),
+             Expanded(
+                child: userBookings.isNotEmpty
+                    ? ListView.separated(
+                        physics: const BouncingScrollPhysics(),
+                        itemCount: userBookings.length,
+                        separatorBuilder: (_, i) => const SizedBox(height: 20),
+                        itemBuilder: (_, i) {
+                          final booking = userBookings[userBookings.length - 1 - i];
+                          final seats = booking.seats;
+                          final imageUrl = booking.posterUrl;
+                          return Padding(
+                            padding: const EdgeInsets.all(18.0),
+                            child: GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => SummaryScreen(
+                                      selectedMovieTitle: booking.movieTitle,
+                                      selectedMoviePoster: booking.posterUrl,
+                                      selectedDate: booking.date,
+                                      selectedTime: booking.time,
+                                      selectedSeats: seats,
+                                    ),
+                                  ),
+                                );
+                              },
+                              child: BookingSummaryRow(
+                                title: booking.movieTitle,
+                                poster: 'https://image.tmdb.org/t/p/w500$imageUrl',
+                                dateTime: '${booking.date}, ${booking.time}',
+                                totalPrice: booking.price,
+                                noOfTickets: booking.numTickets,
+                              ),
                             ),
                           );
                         },
-                      child: BookingSummaryRow(
-                        title: booking.movieTitle,
-                        poster: 'https://image.tmdb.org/t/p/w500$imageUrl',
-                        dateTime: '${booking.date}, ${booking.time}',
-                        totalPrice: booking.price,
-                        noOfTickets: booking.numTickets,
+                      )
+                    : Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.event_busy,
+                              size: 80,
+                              color: Colors.white.withOpacity(0.7),
+                            ),
+                            const SizedBox(height: 20),
+                            const Text(
+                              'No tienes reservas.',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(height: 10),
+                            const Text(
+                              'Empieza a explorar y hacer reservas.',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                      ),
-                    );
-                  },
-                ),
               ),
-            ],
+          ],
+        ),
+        Positioned(
+          top: 40,
+          right: 10,
+          child: IconButton(
+            onPressed: _confirmLogout,
+            icon: const Icon(Icons.logout),
           ),
-          Positioned(
-            top: 40,
-            right: 10,
-            child: IconButton(
-              onPressed: _confirmLogout,
-              icon: const Icon(Icons.logout),
-            ),
-          )
-        ],
-      ),
-    );
-  }
+        )
+      ],
+    ),
+  );
+}
 }
 
 class BookingSummaryRow extends StatelessWidget {

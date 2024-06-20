@@ -73,7 +73,7 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
                           MaterialPageRoute(
                             builder: (context) => MovieDetailPage(
                               movie: movie,
-                              showButton: true,
+                              showButton: false,
                               genreList: movieGenres,
                             ),
                           ),

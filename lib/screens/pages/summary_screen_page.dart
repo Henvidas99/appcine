@@ -3,6 +3,7 @@ import 'package:flutter_dash/flutter_dash.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:the_movie_data_base/models/booking.dart';
+import 'package:the_movie_data_base/provider/account_provider.dart';
 import 'package:the_movie_data_base/provider/booking_provider.dart';
 import 'package:the_movie_data_base/screens/pages/success_screen_page.dart';
 import 'package:provider/provider.dart';
@@ -259,14 +260,18 @@ class ConfirmBookingsButton extends StatefulWidget {
            final seatSelectionProvider = Provider.of<SeatSelectionProvider>(context, listen: false);
           seatSelectionProvider.reserveSeats(widget.selectedMovie['id'].toString(), widget.selectedDate, widget.selectedTime);
 
+          final account = Provider.of<AccountProvider>(context, listen: false).accounts;
+          final id = account[0].userId;
+
           final booking = Booking(
+            userId: id,
             movieTitle: widget.selectedMovie['title'],
             posterUrl: widget.selectedMovie['poster_path'],
             date: widget.selectedDate,
             time: widget.selectedTime,
             price: widget.tickets * 5000,
             numTickets: widget.tickets,
-            seats: seats
+            seats: seats,
           );
 
            final bookingProvider = Provider.of<BookingProvider>(context, listen: false);

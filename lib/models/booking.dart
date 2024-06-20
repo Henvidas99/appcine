@@ -1,5 +1,6 @@
 
 class Booking {
+  final String userId;
   final String movieTitle;
   final String posterUrl;
   final String date;
@@ -9,6 +10,7 @@ class Booking {
   final List<String> seats;
 
   const Booking({
+    required this.userId,
     required this.movieTitle, 
     required this.posterUrl,
     required this.date,

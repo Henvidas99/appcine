@@ -543,28 +543,33 @@ class _TabHomeScreenState extends State<TabHomeScreen> {
                               height: 40,
                               padding: const EdgeInsets.symmetric(horizontal: 10.0),
                               decoration: BoxDecoration(
-                                color: AppColors.blackBackground,
+                                color: AppColors.blackDarkBackground,
                                 borderRadius: BorderRadius.circular(20),
                               ),
                               child: Row(
                                 children: [
                                   Expanded(
-                                    child: TextField(
-                                      controller: _searchController,
-                                      decoration: const InputDecoration(
-                                        hintText: 'Buscar películas...',
-                                        border: InputBorder.none,
-                                        hintStyle: TextStyle(color: Colors.grey),
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(top: 18.0),
+                                      child: TextField(
+                                        textAlign: TextAlign.center,
+                                        controller: _searchController,
+                                        decoration: const InputDecoration(
+                                          hintText: 'Buscar películas...',
+                                          border: InputBorder.none,
+                                          hintStyle: TextStyle(color: Colors.grey),
+                                      
+                                        ),
+                                        style: const TextStyle(color: AppColors.lightBackground),
+                                        onChanged: (query) {
+                                          _searchMovies(query);
+                                          if (query.isEmpty) {
+                                            setState(() {
+                                              _searchResults = [];
+                                            });
+                                          }
+                                        },
                                       ),
-                                      style: const TextStyle(color: AppColors.lightBackground),
-                                      onChanged: (query) {
-                                        _searchMovies(query);
-                                        if (query.isEmpty) {
-                                          setState(() {
-                                            _searchResults = [];
-                                          });
-                                        }
-                                      },
                                     ),
                                   ),
                                   IconButton(
@@ -658,7 +663,7 @@ class _TabHomeScreenState extends State<TabHomeScreen> {
                                             MaterialPageRoute(
                                               builder: (context) => MovieDetailPage(
                                                 movie: movie,
-                                                showButton: true,
+                                                showButton: false,
                                                 genreList: movieGenres,
                                               ),
                                             ),

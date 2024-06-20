@@ -72,7 +72,7 @@ class AuthenticationService {
       final account = Account(
             userId: accountData['id'].toString(), 
             username: accountData['username'], 
-            name: accountData['username'], 
+            name: accountData['name'], 
             avatarPath: accountData['avatar']['tmdb']['avatar_path'] ?? "no avatar",
             avatar: getAvatarImage(accountData),
             

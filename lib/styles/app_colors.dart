@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 class AppColors {
+  static const Color blackDarkBackground = Colors.black87;
   static const Color blackBackground = Colors.black54;
   static const Color darkBackground = Color.fromRGBO(29, 29, 39, 1);
   static const Color accentRed = Color(0xFFE50914);

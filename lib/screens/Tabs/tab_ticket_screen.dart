@@ -273,34 +273,45 @@ class _TabTicketScreenState extends State<TabTicketScreen> {
                                       ),
                                     ],
                                   ),
-                                  ElevatedButton(
-                                    onPressed: isButtonEnabled
-                                        ? () {
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (context) => SummaryScreen(
-                                                  selectedMovie: _selectedMovie,
-                                                  selectedMovieTitle: _selectedMovie['title'],
-                                                  selectedMoviePoster:  _selectedMovie['poster_path'],
-                                                  selectedDate: _selectedDate!,
-                                                  selectedTime: _selectedTime!,
-                                                  selectedSeats: seatSelectionProvider.selectedSeats, 
+                                  Container(
+                                    decoration: const BoxDecoration(
+                                      gradient: LinearGradient(
+                                        colors: [Color(0xFFE50914), Color.fromARGB(255, 23, 6, 1),],
+                                        begin: Alignment.centerLeft,
+                                        end: Alignment.centerRight,
+                                        ),
+                                      borderRadius: BorderRadius.all(Radius.circular(15),
+                                      ),
+                                    ),
+                                    child: TextButton(
+                                      onPressed: isButtonEnabled
+                                          ? () {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) => SummaryScreen(
+                                                    selectedMovie: _selectedMovie,
+                                                    selectedMovieTitle: _selectedMovie['title'],
+                                                    selectedMoviePoster:  _selectedMovie['poster_path'],
+                                                    selectedDate: _selectedDate!,
+                                                    selectedTime: _selectedTime!,
+                                                    selectedSeats: seatSelectionProvider.selectedSeats, 
+                                                  ),
                                                 ),
-                                              ),
-                                            );
-                                          }
-                                        : null,
-                                    style: ButtonStyle(
-                                      backgroundColor: MaterialStateProperty.all(const Color(0xFFE50914)),
-                                      foregroundColor: MaterialStateProperty.resolveWith<Color>((Set<MaterialState> states) {
-                                        if (states.contains(MaterialState.disabled)) {
-                                        return Colors.grey; // Color del texto cuando el botón está deshabilitado
-                                      }
-                                        return Colors.white; // Color del texto cuando el botón está habilitado
-                                    }),
-                                  ),
-                                    child: const Text('Reservar Tiquetes', style: TextStyle(fontSize: 18)),
+                                              );
+                                            }
+                                          : null,
+                                      style: ButtonStyle(
+                                        backgroundColor: MaterialStateProperty.all(Colors.transparent),
+                                        foregroundColor: MaterialStateProperty.resolveWith<Color>((Set<MaterialState> states) {
+                                          if (states.contains(MaterialState.disabled)) {
+                                          return Colors.grey; // Color del texto cuando el botón está deshabilitado
+                                        }
+                                          return Colors.white; // Color del texto cuando el botón está habilitado
+                                      }),
+                                    ),
+                                      child: const Text('Reservar Tiquetes', style: TextStyle(fontSize: 18)),
+                                    ),
                                   ),
                                 ],
                               ),
