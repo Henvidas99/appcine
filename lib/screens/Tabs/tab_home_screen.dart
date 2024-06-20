@@ -2,30 +2,24 @@ import 'package:back_button_interceptor/back_button_interceptor.dart';
 import 'package:flutter/material.dart';
 import 'package:the_movie_data_base/screens/pages/full_movie_list_page.dart';
 import 'package:the_movie_data_base/screens/pages/movie_detail_page.dart';
-import 'package:the_movie_data_base/screens/pages/search_results_page.dart';
+import 'package:the_movie_data_base/screens/pages/search_page.dart';
 import 'package:the_movie_data_base/services/api.service.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:provider/provider.dart';
 import 'package:the_movie_data_base/provider/movies_provider.dart';
-import 'package:the_movie_data_base/styles/app_colors.dart';
+
 
 class TabHomeScreen extends StatefulWidget {
   const TabHomeScreen({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
   _TabHomeScreenState createState() => _TabHomeScreenState();
 }
 
 class _TabHomeScreenState extends State<TabHomeScreen> {
   final ApiService apiService = ApiService();
   bool _isLoading = true;
-  final TextEditingController _searchController = TextEditingController();
-  List<dynamic> _searchResults = [];
-  bool _isSearching = false;
-  DateTime? lastPressed;
-
-
+  DateTime? lastPressed; // Definir lastPressed como una variable de instancia
 
   @override
   void initState() {
@@ -40,36 +34,33 @@ class _TabHomeScreenState extends State<TabHomeScreen> {
     BackButtonInterceptor.remove(interceptor);
   }
 
-  
-   bool interceptor(bool btnEvent, RouteInfo info) {
+  bool interceptor(bool btnEvent, RouteInfo info) {
     if (BackButtonInterceptor.getCurrentNavigatorRouteName(context) != '/') return false;
     final now = DateTime.now();
-    // Check if the current route is TabHomeScreen
-      if (lastPressed == null || now.difference(lastPressed!) > const Duration(seconds: 3)) {
-        lastPressed = now;
-        final snackBar = SnackBar(
-          backgroundColor: Colors.blueGrey,
-          margin: const EdgeInsets.only(bottom: 60.0, left: 40, right: 40),
-          content: Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(60),  
-            ),
-            child: const Center(
-              child: Text(
-                'Presiona nuevamente para salir',
-                style: TextStyle(color: Colors.white, fontSize: 14),
-              ),
+    if (lastPressed == null || now.difference(lastPressed!) > const Duration(seconds: 3)) {
+      lastPressed = now;
+      final snackBar = SnackBar(
+        backgroundColor: Colors.blueGrey,
+        margin: const EdgeInsets.only(bottom: 60.0, left: 40, right: 40),
+        content: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(60),  
+          ),
+          child: const Center(
+            child: Text(
+              'Presiona nuevamente para salir',
+              style: TextStyle(color: Colors.white, fontSize: 14),
             ),
           ),
-          duration: const Duration(seconds: 3),
-          behavior: SnackBarBehavior.floating,
-        );
-        ScaffoldMessenger.of(context).showSnackBar(snackBar);
-        return true;
-      }
+        ),
+        duration: const Duration(seconds: 3),
+        behavior: SnackBarBehavior.floating,
+      );
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      return true;
+    }
     return false;
   }
-
 
   Future<void> _fetchData() async {
     try {
@@ -84,42 +75,6 @@ class _TabHomeScreenState extends State<TabHomeScreen> {
           _isLoading = false;
         });
       }
-    }
-  }
-
-  void _searchMovies(String query) async {
-    if (query.isEmpty) {
-      setState(() {
-        _isSearching = false;
-        _searchResults = [];
-      });
-      return;
-    }
-    setState(() {
-      _isSearching = true;
-    });
-    try {
-      final results = await apiService.searchMovies(query);
-      setState(() {
-        _searchResults = results;
-        _isSearching = false;
-      });
-    } catch (e) {
-      setState(() {
-        _isSearching = false;
-      });
-    }
-  }
-
-  void _navigateToSearchResults(BuildContext context) {
-    final query = _searchController.text;
-    if (query.isNotEmpty) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => SearchResultsPage(query: query),
-        ),
-      );
     }
   }
 
@@ -253,8 +208,7 @@ class _TabHomeScreenState extends State<TabHomeScreen> {
                         style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
-                          fontSize: 16.0,
-                        ),
+                          fontSize: 16.0),
                       ),
                     ),
                   ),
@@ -339,8 +293,7 @@ class _TabHomeScreenState extends State<TabHomeScreen> {
     );
   }
 
-  Widget _buildItemList(
-      MoviesProvider moviesProvider, List<dynamic> dataList, String title) {
+  Widget _buildItemList(MoviesProvider moviesProvider, List<dynamic> dataList, String title) {
     final screenWidth = MediaQuery.of(context).size.width;
     final itemWidth = (screenWidth - 44) / 2; // Ajusta el tamaño del elemento según el ancho de la pantalla
 
@@ -456,7 +409,7 @@ class _TabHomeScreenState extends State<TabHomeScreen> {
   ];
 
   @override
-  Widget build2(BuildContext context) {
+  Widget build(BuildContext context) {
     return _isLoading
         ? const Center(
             child: CircularProgressIndicator(),
@@ -476,7 +429,12 @@ class _TabHomeScreenState extends State<TabHomeScreen> {
                     icon: const Icon(Icons.search),
                     color: Theme.of(context).iconTheme.color,
                     onPressed: () {
-                      _navigateToSearchResults(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => SearchPage(),
+                        ),
+                      );
                     },
                   ),
                 ],
@@ -515,173 +473,4 @@ class _TabHomeScreenState extends State<TabHomeScreen> {
             ),
           );
   }
-
-
-  @override
-   Widget build(BuildContext context) {
-    return _isLoading
-        ? const Center(
-            child: CircularProgressIndicator(),
-          )
-        : DefaultTabController(
-              length: 3,
-              child: Scaffold(
-                appBar: AppBar(
-                  title: Row(
-                    children: [
-                      Image.asset(
-                        'assets/palomitaLente.png',
-                        height: 35,
-                      ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Align(
-                          alignment: Alignment.centerRight,
-                          child: SizedBox(
-                            width: 200, // Podes cambiar el largo de la barra aqui
-                            child: Container(
-                              height: 40,
-                              padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                              decoration: BoxDecoration(
-                                color: AppColors.blackDarkBackground,
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              child: Row(
-                                children: [
-                                  Expanded(
-                                    child: Padding(
-                                      padding: const EdgeInsets.only(top: 18.0),
-                                      child: TextField(
-                                        textAlign: TextAlign.center,
-                                        controller: _searchController,
-                                        decoration: const InputDecoration(
-                                          hintText: 'Buscar películas...',
-                                          border: InputBorder.none,
-                                          hintStyle: TextStyle(color: Colors.grey),
-                                      
-                                        ),
-                                        style: const TextStyle(color: AppColors.lightBackground),
-                                        onChanged: (query) {
-                                          _searchMovies(query);
-                                          if (query.isEmpty) {
-                                            setState(() {
-                                              _searchResults = [];
-                                            });
-                                          }
-                                        },
-                                      ),
-                                    ),
-                                  ),
-                                  IconButton(
-                                    icon: const Icon(Icons.search),
-                                    color: AppColors.lightBackground,
-                                    onPressed: () {
-                                      _navigateToSearchResults(context);
-                                    },
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  backgroundColor: AppColors.blackBackground,
-                  toolbarHeight: 60,
-                ),
-                body: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Divider(
-                      height: 0.5,
-                      thickness: 0.5,
-                      color: Color.fromARGB(255, 77, 80, 60),
-                    ),
-                    Container(
-                      color: Theme.of(context).appBarTheme.backgroundColor,
-                      height: 35,
-                      child: TabBar(
-                        dividerColor: const Color.fromARGB(255, 77, 80, 60),
-                        labelColor: Theme.of(context).primaryColor,
-                        unselectedLabelColor: Theme.of(context).iconTheme.color,
-                        indicatorColor: Theme.of(context).primaryColor,
-                        isScrollable: false,
-                        tabs: const [
-                          Tab(child: Text("Explora", textAlign: TextAlign.center)),
-                          Tab(child: Text("Categorías", textAlign: TextAlign.center)),
-                          Tab(child: Text("Géneros", textAlign: TextAlign.center)),
-                        ],
-                        labelPadding: const EdgeInsets.symmetric(horizontal: 16.0),
-                      ),
-                    ),
-                    Expanded(
-                      child: Stack(
-                        children: [
-                          TabBarView(
-                            children: [
-                              buildContent(context, 0),
-                              buildContent(context, 1),
-                              buildContent(context, 2),
-                            ],
-                          ),
-                          if (_searchController.text.isNotEmpty && _searchResults.isNotEmpty)
-                            Positioned(
-                              top: 0,
-                              left: 0,
-                              right: 0,
-                              child: Container(
-                                color: const Color.fromARGB(144, 0, 0, 0),
-                                height: 200,
-                                child: Material(
-                                  color: Colors.transparent,
-                                  elevation: 5,
-                                  child: ListView.builder(
-                                    shrinkWrap: true,
-                                    itemCount: _searchResults.length,
-                                    itemBuilder: (context, index) {
-                                      final movie = _searchResults[index];
-                                      final moviesProvider = Provider.of<MoviesProvider>(context, listen: false);
-                                      final List<String> movieGenres = [];
-                                      final List<int> genreIds = List<int>.from(movie['genre_ids']);
-                                      for (var genreId in genreIds) {
-                                        final genreName = moviesProvider.genres[genreId] ?? 'Otros';
-                                        movieGenres.add(genreName);
-                                      }
-                                      return ListTile(
-                                        leading: Image.network(
-                                          movie['poster_path'] != null
-                                              ? 'https://image.tmdb.org/t/p/w92${movie['poster_path']}'
-                                              : 'https://via.placeholder.com/92x138?text=No+Image',
-                                          fit: BoxFit.cover,
-                                        ),
-                                        title: Text(movie['title'], style: const TextStyle(color: Colors.white)),
-                                        subtitle: Text(movie['release_date'], style: const TextStyle(color: Colors.white)),
-                                        onTap: () {
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) => MovieDetailPage(
-                                                movie: movie,
-                                                showButton: false,
-                                                genreList: movieGenres,
-                                              ),
-                                            ),
-                                          );
-                                        },
-                                      );
-                                    },
-                                  ),
-                                ),
-                              ),
-                            ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-          );
-      }
-
 }
