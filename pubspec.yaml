@@ -44,6 +44,8 @@ dependencies:
   flutter_dash: ^1.0.0
   back_button_interceptor: ^7.0.3
   page_transition: ^2.1.0
+  get: ^4.6.6
+  google_fonts: ^4.0.4
 
 dev_dependencies:
   flutter_test:

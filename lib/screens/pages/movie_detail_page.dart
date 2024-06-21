@@ -6,6 +6,8 @@ import 'package:the_movie_data_base/screens/widgets/info_widget.dart';
 import 'package:the_movie_data_base/screens/widgets/trailer_widget.dart'; 
 import 'package:provider/provider.dart';
 import 'package:the_movie_data_base/provider/seat_selection_provider.dart';
+import 'package:page_transition/page_transition.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class MovieDetailPage extends StatefulWidget {
   final dynamic movie;
@@ -88,8 +90,12 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
                           onPressed: () async {
                             Navigator.push(
                               context,
-                              MaterialPageRoute(
-                                builder: (context) => TabTicketScreen(selectedMovie: widget.movie),
+                               PageTransition(
+                                type: PageTransitionType.scale,
+                                reverseDuration: const Duration(milliseconds: 500),
+                                alignment: Alignment.bottomCenter,
+                                duration: const Duration(milliseconds: 500),
+                                child: TabTicketScreen(selectedMovie: widget.movie, band: true),
                               ),
                             );
                             Provider.of<SeatSelectionProvider>(context, listen: false).clearSelectedSeats();
@@ -98,9 +104,13 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
                             fixedSize: const Size.fromHeight(50),
                             backgroundColor: const Color(0xFFE50914),
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
-                          child: const Text('Reservar Tiquetes', style: TextStyle(fontSize: 18, color: Colors.white)),
+                          child: Text('Reservar Tiquetes', 
+                          style: GoogleFonts.oswald(
+                            textStyle: const TextStyle( fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+                          ),
                         ),
                       ),
+                    ),
                   ],
                 ),
               ),

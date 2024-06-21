@@ -61,7 +61,7 @@ class MovieSeats extends StatelessWidget {
               'Selecciona los Asientos',
               style: TextStyle(
                 color: Colors.white,
-                fontWeight: FontWeight.bold,
+                fontWeight: FontWeight.w500,
                 fontSize: 18,
                 ),
               ),

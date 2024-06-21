@@ -8,6 +8,8 @@ import 'package:the_movie_data_base/provider/account_provider.dart';
 import 'dart:convert';
 import 'package:the_movie_data_base/provider/booking_provider.dart';
 import 'package:the_movie_data_base/screens/pages/summary_screen_page.dart';
+import 'package:page_transition/page_transition.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 
 class AccountService {
@@ -186,12 +188,10 @@ class _TabAccountScreenState extends State<TabAccountScreen> {
                             Expanded(
                               child: Column(
                                 children: [
-                                  const Text(
+                                  Text(
                                     'Usuario',
-                                    style: TextStyle(
-                                      color: Color.fromARGB(255, 229, 0, 0),
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w600,
+                                    style: GoogleFonts.oswald(
+                                    textStyle: const TextStyle( fontSize: 16, fontWeight: FontWeight.bold,color: Color.fromARGB(255, 229, 0, 0), ),
                                     ),
                                   ),
                                   Text(
@@ -209,13 +209,11 @@ class _TabAccountScreenState extends State<TabAccountScreen> {
                             Expanded(
                               child: Column(
                                 children: [
-                                  const Text(
+                                    Text(
                                     'Nombre',
-                                    style: TextStyle(
-                                      color: Color.fromARGB(255, 229, 0, 0),
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w600,
-                                    ),
+                                    style: GoogleFonts.oswald(
+                                    textStyle: const TextStyle( fontSize: 16, fontWeight: FontWeight.bold,color: Color.fromARGB(255, 229, 0, 0), ),
+                                  ),
                                   ),
                                   Text(
                                     account[0].name,
@@ -250,7 +248,7 @@ class _TabAccountScreenState extends State<TabAccountScreen> {
                 height: 60,
                 width: MediaQuery.of(context).size.width,
                 decoration: BoxDecoration(
-                  color: Color.fromRGBO(155, 0, 0, 0.4),
+                  color: const Color.fromRGBO(155, 0, 0, 0.4),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withOpacity(0.2),
@@ -259,17 +257,15 @@ class _TabAccountScreenState extends State<TabAccountScreen> {
                     ),
                   ],
                 ),
-                child: const Center(
+                child: Center(
                   child: Text(
                     'Historial de reservas',
-                    style: TextStyle(
-                      fontSize: 20,
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
+                    style: GoogleFonts.oswald(
+                      textStyle: const TextStyle( fontSize: 22, fontWeight: FontWeight.bold ),
                     ),
                   ),
                 ),
-                           ),
+              ),
              ),
              Expanded(
                 child: userBookings.isNotEmpty
@@ -287,8 +283,12 @@ class _TabAccountScreenState extends State<TabAccountScreen> {
                               onTap: () {
                                 Navigator.push(
                                   context,
-                                  MaterialPageRoute(
-                                    builder: (context) => SummaryScreen(
+                                  PageTransition(
+                                    type: PageTransitionType.scale,
+                                    reverseDuration: const Duration(milliseconds: 500),
+                                    alignment: Alignment.bottomCenter,
+                                    duration: const Duration(milliseconds: 500),
+                                    child:SummaryScreen(
                                       selectedMovieTitle: booking.movieTitle,
                                       selectedMoviePoster: booking.posterUrl,
                                       selectedDate: booking.date,
@@ -342,7 +342,7 @@ class _TabAccountScreenState extends State<TabAccountScreen> {
           ],
         ),
         Positioned(
-          top: 40,
+          top: 38,
           right: 10,
           child: IconButton(
             onPressed: _confirmLogout,

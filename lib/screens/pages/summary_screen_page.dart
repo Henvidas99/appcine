@@ -104,6 +104,7 @@ class TicketsSummaryBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+    final price = selectedSeats.length * 5000;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal:30.0,vertical: 20.0 ),
@@ -197,7 +198,7 @@ class TicketsSummaryBox extends StatelessWidget {
                     padding: const EdgeInsets.only(top: 10.0),
                     child: Center(
                       child: QrImageView(
-                        data: 'Película: $selectedMovieTitle, Fecha: $selectedDate, Hora: $selectedTime, Asientos: $selectedSeats ',
+                        data: 'Película: $selectedMovieTitle, Fecha: $selectedDate, Hora: $selectedTime, Asientos: $selectedSeats, Precio: $price',
                         version: QrVersions.auto,
                         size: (size.height - 80) * 0.20,
                         gapless: false,

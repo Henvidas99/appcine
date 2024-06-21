@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:the_movie_data_base/services/api.service.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class CreditsWidget extends StatefulWidget {
   final dynamic movie;
@@ -42,18 +43,32 @@ class _CreditsWidgetState extends State<CreditsWidget> {
               if (director != null) ...[
                 Padding(
                   padding: const EdgeInsets.only(bottom: 4.0),
-                  child: Text(
-                    'Director: $director',
-                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  child: Row(
+                    children: [         
+                        Text(
+                          'Director: ',
+                          style: GoogleFonts.oswald(
+                          textStyle: const TextStyle( fontSize: 14, fontWeight: FontWeight.bold,),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 3.0),
+                          child: Text(
+                            '$director',
+                          ),
+                        ),
+                    ],
                   ),
                 ),
               ],
               if (cast != null) ...[
-                const Padding(
-                  padding: EdgeInsets.only(bottom: 8.0),
+                  Padding(
+                  padding: const EdgeInsets.only(bottom: 8.0),
                   child: Text(
                     'Elenco:',
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                     style: GoogleFonts.oswald(
+                     textStyle: const TextStyle( fontSize: 14, fontWeight: FontWeight.bold,),
+                    ),
                   ),
                 ),
                 SizedBox(

@@ -1,5 +1,6 @@
 import 'package:back_button_interceptor/back_button_interceptor.dart';
 import 'package:flutter/material.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:the_movie_data_base/screens/pages/full_movie_list_page.dart';
 import 'package:the_movie_data_base/screens/pages/movie_detail_page.dart';
 import 'package:the_movie_data_base/screens/pages/search_page.dart';
@@ -7,6 +8,8 @@ import 'package:the_movie_data_base/services/api.service.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:provider/provider.dart';
 import 'package:the_movie_data_base/provider/movies_provider.dart';
+import 'package:google_fonts/google_fonts.dart';
+
 
 
 class TabHomeScreen extends StatefulWidget {
@@ -181,8 +184,11 @@ class _TabHomeScreenState extends State<TabHomeScreen> {
                 onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(
-                      builder: (context) => MovieDetailPage(
+                    PageTransition(
+                      type: PageTransitionType.bottomToTop,
+                      reverseDuration: const Duration(milliseconds: 500),
+                      duration: const Duration(milliseconds: 500),
+                      child: MovieDetailPage(
                         movie: item,
                         showButton: true,
                         genreList: movieGenres,
@@ -205,10 +211,7 @@ class _TabHomeScreenState extends State<TabHomeScreen> {
                       padding: const EdgeInsets.only(bottom: 8.0),
                       child: Text(
                         item['title'] ?? item['name'],
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                          fontSize: 16.0),
+                         style: const TextStyle( fontSize: 16, fontWeight: FontWeight.bold, ),
                       ),
                     ),
                   ),
@@ -229,9 +232,8 @@ class _TabHomeScreenState extends State<TabHomeScreen> {
         children: [
           Text(
             title,
-            style: const TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
+            style: GoogleFonts.oswald(
+            textStyle: const TextStyle( fontSize: 20, fontWeight: FontWeight.bold, ),
             ),
           ),
           if (title == 'Estrenos' ||
@@ -243,8 +245,12 @@ class _TabHomeScreenState extends State<TabHomeScreen> {
                 if (title == 'Estrenos') {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(
-                      builder: (context) => FullMovieListPage(
+                    PageTransition(
+                      type: PageTransitionType.scale,
+                      reverseDuration: const Duration(milliseconds: 500),
+                      alignment: Alignment.bottomCenter,
+                      duration: const Duration(milliseconds: 500),
+                      child: FullMovieListPage(
                         title: title,
                         movieList: moviesProvider.recentMoviesData,
                         genres: moviesProvider.genres,
@@ -254,8 +260,12 @@ class _TabHomeScreenState extends State<TabHomeScreen> {
                 } else if (title == 'Próximos Estrenos') {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(
-                      builder: (context) => FullMovieListPage(
+                    PageTransition(
+                      type: PageTransitionType.scale,
+                      reverseDuration: const Duration(milliseconds: 500),
+                      alignment: Alignment.bottomCenter,
+                      duration: const Duration(milliseconds: 500),
+                      child: FullMovieListPage(
                         title: title,
                         movieList: moviesProvider.upcomingData,
                         genres: moviesProvider.genres,
@@ -265,8 +275,12 @@ class _TabHomeScreenState extends State<TabHomeScreen> {
                 } else if (title == 'Populares') {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(
-                      builder: (context) => FullMovieListPage(
+                     PageTransition(
+                      type: PageTransitionType.scale,
+                      reverseDuration: const Duration(milliseconds: 500),
+                      alignment: Alignment.bottomCenter,
+                      duration: const Duration(milliseconds: 500),
+                      child: FullMovieListPage(
                         title: title,
                         movieList: moviesProvider.popularData,
                         genres: moviesProvider.genres,
@@ -276,8 +290,12 @@ class _TabHomeScreenState extends State<TabHomeScreen> {
                 } else if (title == 'Mejor Calificadas') {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(
-                      builder: (context) => FullMovieListPage(
+                     PageTransition(
+                      type: PageTransitionType.scale,
+                      reverseDuration: const Duration(milliseconds: 500),
+                      alignment: Alignment.bottomCenter,
+                      duration: const Duration(milliseconds: 500),
+                      child: FullMovieListPage(
                         title: title,
                         movieList: moviesProvider.topRatedData,
                         genres: moviesProvider.genres,
@@ -319,17 +337,19 @@ class _TabHomeScreenState extends State<TabHomeScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 6.0),
               child: GestureDetector(
                 onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => MovieDetailPage(
-                        movie: item,
-                        genreList: movieGenres,
-                        showButton: title == 'Estrenos' ? true : false, 
-                      
-                      ),
+                Navigator.push(
+                  context,
+                  PageTransition(
+                    type: PageTransitionType.bottomToTop,
+                    reverseDuration: const Duration(milliseconds: 300),
+                    duration: const Duration(milliseconds: 500),
+                    child: MovieDetailPage(
+                      movie: item,
+                      genreList: movieGenres,
+                      showButton: title == 'Estrenos' ? true : false,
                     ),
-                  );
+                  ),
+                );
                 },
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -474,3 +494,4 @@ class _TabHomeScreenState extends State<TabHomeScreen> {
           );
   }
 }
+

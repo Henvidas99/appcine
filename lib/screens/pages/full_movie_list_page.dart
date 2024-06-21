@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:the_movie_data_base/screens/pages/movie_detail_page.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class FullMovieListPage extends StatelessWidget {
   final String title;
@@ -13,7 +15,12 @@ Widget build(BuildContext context) {
   
   return Scaffold(
     appBar: AppBar(
-       title: Text(title), centerTitle: true,
+       title: Text(title,
+        style: GoogleFonts.oswald(
+          textStyle: const TextStyle( fontSize: 20, fontWeight: FontWeight.bold,color: Colors.white,),
+          ),
+        ), 
+       centerTitle: true,
     ),
     body: GridView.count(
         crossAxisCount: 3, 
@@ -35,10 +42,17 @@ Widget build(BuildContext context) {
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: 1.0, vertical: 4.0),
             child: GestureDetector(
-              onTap: () {  Navigator.push(
+              onTap: () {
+                Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => MovieDetailPage(movie:item, showButton: title == 'Estrenos' ? true : false, genreList: movieGenres,
-                )),
+                PageTransition(
+                  type: PageTransitionType.bottomToTop,
+                  reverseDuration: const Duration(milliseconds: 500),
+                  duration: const Duration(milliseconds: 500),
+                  child: MovieDetailPage(
+                    movie:item, showButton: title == 'Estrenos' ? true : false, genreList: movieGenres,
+                )
+               ),
               );
             },
               child: Container(

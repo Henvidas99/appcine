@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 
 class MovieInfoWidget extends StatefulWidget {
@@ -23,12 +24,12 @@ class _MovieInfoWidgetState extends State<MovieInfoWidget> {
     return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
-      const Padding(
-        padding: EdgeInsets.only(bottom: 8.0),
+        Padding(
+        padding: const EdgeInsets.only(bottom: 8.0),
         child: Text(
           'Descripción:',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
+          style: GoogleFonts.oswald(
+            textStyle: const TextStyle( fontSize: 14, fontWeight: FontWeight.bold,),
           ),
         ),
       ),
@@ -112,8 +113,8 @@ Widget _buildOverview() {
       children: [
         Text(
           '$label:',
-          style: const TextStyle(
-            fontWeight: FontWeight.bold,
+           style: GoogleFonts.oswald(
+            textStyle: const TextStyle( fontSize: 14, fontWeight: FontWeight.bold,),
           ),
         ),
         Text(value),

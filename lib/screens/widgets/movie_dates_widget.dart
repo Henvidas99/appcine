@@ -78,7 +78,7 @@ Widget build(BuildContext context) {
               'Selecciona Fecha y Hora',
               style: TextStyle(
                 color: Colors.white,
-                fontWeight: FontWeight.bold,
+                fontWeight: FontWeight.w500,
                 fontSize: 18,
               ),
           ),

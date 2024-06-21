@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 
 class GenreList extends StatelessWidget {
@@ -14,12 +15,12 @@ class GenreList extends StatelessWidget {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
-      const Padding(
-        padding: EdgeInsets.only(bottom: 8.0, top: 5.0),
+        Padding(
+        padding: const EdgeInsets.only(bottom: 8.0, top: 5.0),
         child: Text(
           'Género:',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
+          style: GoogleFonts.oswald(
+            textStyle: const TextStyle( fontSize: 14, fontWeight: FontWeight.bold,),
           ),
         ),
       ),

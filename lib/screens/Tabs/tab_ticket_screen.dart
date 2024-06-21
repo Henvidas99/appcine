@@ -1,5 +1,6 @@
 import 'package:back_button_interceptor/back_button_interceptor.dart';
 import 'package:flutter/material.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:the_movie_data_base/models/seats.dart';
 import 'package:the_movie_data_base/screens/pages/summary_screen_page.dart';
@@ -10,13 +11,16 @@ import 'package:the_movie_data_base/services/api.service.dart';
 import 'package:provider/provider.dart';
 import 'package:the_movie_data_base/provider/seat_selection_provider.dart';
 import 'package:the_movie_data_base/provider/movies_provider.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class TabTicketScreen extends StatefulWidget {
   final dynamic selectedMovie;
+  final bool band;
 
   const TabTicketScreen({
     super.key,
     this.selectedMovie,
+    this.band = false
   });
 
   @override
@@ -200,15 +204,32 @@ class _TabTicketScreenState extends State<TabTicketScreen> {
     bool isButtonEnabled = _selectedMovie != null && _selectedDate != null && _selectedTime != null && seatSelectionProvider.selectedSeats.isNotEmpty;
 
     return Scaffold(
-      appBar: AppBar(
+      appBar: AppBar(   
         backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
         toolbarHeight: size * 0.08,
+        leading: _selectedMovie != null
+        ? IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white, size: 24,),
+          onPressed: () {
+            if(widget.band) {
+              Navigator.of(context).pop();
+            } else {
+              setState(() {
+                _selectedMovie = null;
+              });
+            }
+          },
+        )
+        : null,
         title: Center(
-          child: SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Text(
-              _selectedMovie != null ? _selectedMovie['title'] : 'Seleccionar Película',
-              style: const TextStyle(fontSize: 18, color: Colors.white, fontWeight: FontWeight.bold),
+        child: SingleChildScrollView(
+          padding: EdgeInsets.zero,
+          scrollDirection: Axis.horizontal,
+          child: Text(
+            _selectedMovie != null ? _selectedMovie['title'] : 'Seleccionar Película',
+            style: GoogleFonts.oswald(
+              textStyle: const TextStyle( fontSize: 20, fontWeight: FontWeight.bold,color: Colors.white, ),
+              ),
             ),
           ),
         ),
@@ -288,8 +309,12 @@ class _TabTicketScreenState extends State<TabTicketScreen> {
                                           ? () {
                                               Navigator.push(
                                                 context,
-                                                MaterialPageRoute(
-                                                  builder: (context) => SummaryScreen(
+                                                 PageTransition(
+                                                  type: PageTransitionType.scale,
+                                                  reverseDuration: const Duration(milliseconds: 800),
+                                                  alignment: Alignment.bottomCenter,
+                                                  duration: const Duration(milliseconds: 1000),
+                                                  child:SummaryScreen(
                                                     selectedMovie: _selectedMovie,
                                                     selectedMovieTitle: _selectedMovie['title'],
                                                     selectedMoviePoster:  _selectedMovie['poster_path'],

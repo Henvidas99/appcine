@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:the_movie_data_base/screens/pages/movie_detail_page.dart';
 import 'package:the_movie_data_base/services/api.service.dart';
+import 'package:page_transition/page_transition.dart';
 
 class SearchPage extends StatefulWidget {
   @override
@@ -31,48 +32,57 @@ class _SearchPageState extends State<SearchPage> {
     }
   }
 
-  void _searchMovies(String query) async {
-    if (query.isEmpty) {
+void _searchMovies(String query) async {
+  if (query.isEmpty) {
+    if (mounted) {
       setState(() {
         _isSearching = false;
         _searchResults = [];
       });
-      return;
     }
+    return;
+  }
+  if (mounted) {
     setState(() {
       _isSearching = true;
     });
-    try {
-      final results = await apiService.searchMovies(query);
+  }
+  try {
+    final results = await apiService.searchMovies(query);
+    if (mounted) {
       setState(() {
         _searchResults = results;
         _isSearching = false;
       });
-    } catch (e) {
+    }
+  } catch (e) {
+    if (mounted) {
       setState(() {
         _isSearching = false;
       });
     }
   }
+}
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: TextField(
+          cursorColor: const Color(0xFFE50914),
           controller: _searchController,
-          decoration: InputDecoration(
+          decoration: const InputDecoration(
             hintText: 'Buscar películas...',
             border: InputBorder.none,
             hintStyle: TextStyle(color: Colors.grey),
           ),
-          style: TextStyle(color: Colors.white),
+          style: const TextStyle(color: Colors.white),
           onChanged: (query) => _searchMovies(query), // Realiza la búsqueda en tiempo real
         ),
         backgroundColor: Colors.black,
         actions: [
           IconButton(
-            icon: Icon(Icons.search),
+            icon: const Icon(Icons.search),
             onPressed: () {
               _searchMovies(_searchController.text);
             },
@@ -80,7 +90,7 @@ class _SearchPageState extends State<SearchPage> {
         ],
       ),
       body: _isSearching
-          ? Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator(color: Color(0xFFE50914)))
           : GridView.count(
               crossAxisCount: 3,
               mainAxisSpacing: 2.0,
@@ -103,8 +113,11 @@ class _SearchPageState extends State<SearchPage> {
                     onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(
-                          builder: (context) => MovieDetailPage(
+                         PageTransition(
+                          type: PageTransitionType.bottomToTop,
+                          reverseDuration: const Duration(milliseconds: 500),
+                          duration: const Duration(milliseconds: 500),
+                          child: MovieDetailPage(
                             movie: item,
                             showButton: false,
                             genreList: movieGenres,
