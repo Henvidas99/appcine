@@ -67,7 +67,9 @@ class MyRouter extends StatelessWidget {
                 transitionDuration: const Duration(milliseconds: 1000), 
               );
             } else {
-              return const MaterialPage(child: WelcomeScreen());
+              return MaterialPage(
+                key: state.pageKey,
+                child: const WelcomeScreen());
             }
           },
         ),
