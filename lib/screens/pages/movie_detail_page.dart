@@ -43,7 +43,7 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
         children: [
           Positioned.fill(
             child: SingleChildScrollView(
-              padding: EdgeInsets.only(top: size * 0.30), // Padding para el espacio del trailer
+              padding: EdgeInsets.only(top: size * 0.30), 
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
@@ -117,7 +117,7 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
             top: 0,
             left: 0,
             right: 0,
-            height: size * 0.30, // Altura fija para el tráiler
+            height: size * 0.30, 
             child: _trailerWidget,
           ),
           Positioned(

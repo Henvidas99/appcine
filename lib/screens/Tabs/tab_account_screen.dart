@@ -364,7 +364,6 @@ class BookingSummaryRow extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              // Ticket total and movie name
               Expanded(
                 child: Container(
                   decoration: const BoxDecoration(
@@ -390,17 +389,14 @@ class BookingSummaryRow extends StatelessWidget {
                         ),
                       ),
                       const Spacer(),
-                      // Show timings row
                       Row(
                         children: [
-                          // Show date icon
                           const Icon(
                             Icons.date_range_outlined,
                             size: 19,
                             color: Colors.red,
                           ),
                           const SizedBox(width: 10),
-                          // Show time data
                           Text(
                             dateTime,
                             style: const TextStyle(
@@ -411,17 +407,14 @@ class BookingSummaryRow extends StatelessWidget {
                         ],
                       ),
                       const Spacer(),
-                      // Show payment row
                       Row(
                         children: [
-                          // Total icon
                           const Icon(
                             Icons.local_atm_outlined,
                             size: 19,
                             color: Colors.green,
                           ),
                           const SizedBox(width: 10),
-                          // Total data
                           Text(
                             '₡ $totalPrice',
                             style: const TextStyle(
@@ -435,7 +428,6 @@ class BookingSummaryRow extends StatelessWidget {
                   ),
                 ),
               ),
-              // No of seats
               SizedBox(
                 height: double.infinity,
                 width: 45,
@@ -450,13 +442,11 @@ class BookingSummaryRow extends StatelessWidget {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      // Ticket icon
                       const Icon(
                         Icons.local_activity_sharp,
                         color: Colors.white,
                       ),
                       const SizedBox(height: 5),
-                      // No. of seats
                       Text(
                         '$noOfTickets',
                         style: const TextStyle(

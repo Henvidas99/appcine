@@ -464,13 +464,13 @@ class _TabHomeScreenState extends State<TabHomeScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Divider(
-                    height: 0.5, // Altura delgada
+                    height: 0.5,
                     thickness: 0.5,
                     color: Color.fromARGB(255, 77, 80, 60), 
                   ),
                   Container(
                     color: Theme.of(context).appBarTheme.backgroundColor, 
-                    height: 35, // Altura del contenedor
+                    height: 35,
                     child: TabBar(
                       dividerColor: const Color.fromARGB(255, 77, 80, 60),
                       labelColor: Theme.of(context).primaryColor,

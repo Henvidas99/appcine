@@ -285,7 +285,6 @@ class _TabTicketScreenState extends State<TabTicketScreen> {
                           topRight: Radius.circular(50),
                         ),
                       ),
-                      // Color diferente para identificación
                       child: Padding(
                         padding: const EdgeInsets.symmetric(vertical: 4.0),
                         child: Column(
