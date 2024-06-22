@@ -45,7 +45,6 @@ class _TrailerWidgetState extends State<TrailerWidget> with SingleTickerProvider
           });
         }
       } else {
-       // print('Error: Trailer key is null');
         if (mounted) {
           setState(() {
             _isControllerInitialized = true;
@@ -53,8 +52,6 @@ class _TrailerWidgetState extends State<TrailerWidget> with SingleTickerProvider
         }
       }
     } catch (e) {
-      //print('Error fetching trailer key: $e');
-      // Handle error
       if (mounted) {
         setState(() {
           _isControllerInitialized = true;
@@ -117,6 +114,7 @@ class _TrailerWidgetState extends State<TrailerWidget> with SingleTickerProvider
                     ),
                   ),
                   RemainingDuration(),
+                  PlaybackSpeedButton(controller: _controller!),
                   if (_isVideoEnded)
                     IconButton(
                       icon: const Icon(Icons.replay),
@@ -124,9 +122,7 @@ class _TrailerWidgetState extends State<TrailerWidget> with SingleTickerProvider
                         _controller!.seekTo(Duration.zero);
                         _controller!.play();
                       },
-                    )
-                  else
-                    FullScreenButton(),
+                    ),
                 ],
               )
             : Container(
