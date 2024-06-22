@@ -69,7 +69,8 @@ class _MovieDatesWidgetState extends State<MovieDatesWidget> {
 Widget build(BuildContext context) {
    final size = MediaQuery.of(context).size.height * 0.30;
 
-  return Expanded(
+  return Padding(
+    padding: const EdgeInsets.symmetric(vertical: 8.0),
     child: Column(
       children: [
         SizedBox(

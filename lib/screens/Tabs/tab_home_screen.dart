@@ -16,13 +16,14 @@ class TabHomeScreen extends StatefulWidget {
   const TabHomeScreen({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _TabHomeScreenState createState() => _TabHomeScreenState();
 }
 
 class _TabHomeScreenState extends State<TabHomeScreen> {
   final ApiService apiService = ApiService();
   bool _isLoading = true;
-  DateTime? lastPressed; // Definir lastPressed como una variable de instancia
+  DateTime? lastPressed; 
 
   @override
   void initState() {
@@ -313,7 +314,7 @@ class _TabHomeScreenState extends State<TabHomeScreen> {
 
   Widget _buildItemList(MoviesProvider moviesProvider, List<dynamic> dataList, String title) {
     final screenWidth = MediaQuery.of(context).size.width;
-    final itemWidth = (screenWidth - 44) / 2; // Ajusta el tamaño del elemento según el ancho de la pantalla
+    final itemWidth = (screenWidth - 44) / 2; 
 
     return Padding(
       padding: const EdgeInsets.all(10.0),
@@ -452,7 +453,7 @@ class _TabHomeScreenState extends State<TabHomeScreen> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => SearchPage(),
+                          builder: (context) => const SearchPage(),
                         ),
                       );
                     },

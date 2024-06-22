@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../../services/authentication.service.dart'; 
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -60,7 +61,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
 
       // ignore: use_build_context_synchronously
-      context.go('/');
+      context.go('/', extra: 'fromLogin');
     } catch (error) {
       setState(() {
         _isLoading = false;
@@ -131,6 +132,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     border: Border.all(),
                   ),
                   child: TextFormField(
+                    cursorColor: const Color(0xFFE50914),
                     controller: _usernameController,
                     style: const TextStyle(color: Colors.white),
                     decoration: InputDecoration(
@@ -151,7 +153,8 @@ class _LoginScreenState extends State<LoginScreen> {
                     borderRadius: BorderRadius.circular(10.0),
                     border: Border.all(),
                   ),
-                  child: TextFormField(                
+                  child: TextFormField(      
+                    cursorColor: const Color(0xFFE50914),          
                     obscuringCharacter: '*',
                     controller: _passwordController,
                     style: const TextStyle(color: Colors.white),
@@ -194,7 +197,9 @@ class _LoginScreenState extends State<LoginScreen> {
                               valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                             ),
                           )
-                        : const Text('Iniciar sesión', style: TextStyle(color: Colors.white, fontSize: 16)),
+                        : Text('Iniciar sesión', 
+                          style: GoogleFonts.oswald(
+                            textStyle: const TextStyle( fontSize: 18, fontWeight: FontWeight.bold,color: Colors.white), )),
                   ),
                 ),
               ],

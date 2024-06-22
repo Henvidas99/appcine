@@ -30,17 +30,16 @@ class TabAccountScreen extends StatefulWidget {
   const TabAccountScreen({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _TabAccountScreenState createState() => _TabAccountScreenState();
 }
 
 class _TabAccountScreenState extends State<TabAccountScreen> {
-  Map<String, dynamic> _accountData = {};
   DateTime? lastPressed;
 
   @override
   void initState() {
     super.initState();
-    _loadAccountData();
     BackButtonInterceptor.add(interceptor);
   }
 
@@ -79,43 +78,27 @@ class _TabAccountScreenState extends State<TabAccountScreen> {
     return false;
   }
 
-  Future<void> _loadAccountData() async {
-    final accountData = await AccountService.getAccountData();
-    setState(() {
-      _accountData = accountData;
-    });
-  }
-
-  ImageProvider<Object>? _getAvatarImage() {
-    if (_accountData.containsKey('avatar') &&
-        _accountData['avatar'] != null &&
-        _accountData['avatar']['tmdb'] != null &&
-        _accountData['avatar']['tmdb']['avatar_path'] != null) {
-      final String avatarPath = _accountData['avatar']['tmdb']['avatar_path'];
-      return NetworkImage('https://image.tmdb.org/t/p/w500$avatarPath');
-    } else {
-      return const AssetImage('assets/logo.png');
-    }
-  }
 
   void _confirmLogout() {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          content: const Text('¿Estás seguro de que deseas cerrar sesión?' ),
-          backgroundColor: Colors.blueGrey,
+          content: Text('¿Estás seguro de que deseas cerrar sesión?',
+            style: GoogleFonts.oswald(
+              textStyle: const TextStyle( fontSize: 18, fontWeight: FontWeight.normal,color: Colors.white, ),),),
+          backgroundColor: Colors.grey,
 
           actions: <Widget>[
             TextButton(
-              child: const Text('Cancelar', style: TextStyle(color:Color(0xFFE50914))),
+              child: const Text('Cancelar', style: TextStyle(color: Colors.black87, fontSize: 14, fontWeight: FontWeight.bold)),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
             FilledButton(
-              style: ButtonStyle(backgroundColor: MaterialStatePropertyAll(Colors.blue[200])),
-              child: const Text('Cerrar sesión',style: TextStyle(color:Colors.blue)),
+              style: const ButtonStyle(backgroundColor: MaterialStatePropertyAll(Color(0xFFE50914))),
+              child: const Text('Cerrar sesión',style: TextStyle(color:Colors.white)),
               onPressed: () {
                 _logout();
                 Navigator.of(context).pop();
@@ -130,7 +113,7 @@ class _TabAccountScreenState extends State<TabAccountScreen> {
   void _logout() {
     final accountProvider = Provider.of<AccountProvider>(context, listen: false);
     accountProvider.removeAccount();
-    context.pushReplacement('/login');
+    context.pushReplacement('/login', extra: 'fromLogout');
   }
 
   @override
@@ -338,16 +321,16 @@ class _TabAccountScreenState extends State<TabAccountScreen> {
                           ],
                         ),
                       ),
-              ),
-          ],
-        ),
-        Positioned(
-          top: 38,
-          right: 10,
-          child: IconButton(
-            onPressed: _confirmLogout,
-            icon: const Icon(Icons.logout),
-          ),
+                  ),
+              ],
+            ),
+            Positioned(
+              top: 38,
+              right: 10,
+              child: IconButton(
+                onPressed: _confirmLogout,
+                icon: const Icon(Icons.logout),
+            ),
         )
       ],
     ),

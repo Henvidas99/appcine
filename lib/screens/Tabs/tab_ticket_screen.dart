@@ -204,34 +204,55 @@ class _TabTicketScreenState extends State<TabTicketScreen> {
     bool isButtonEnabled = _selectedMovie != null && _selectedDate != null && _selectedTime != null && seatSelectionProvider.selectedSeats.isNotEmpty;
 
     return Scaffold(
-      appBar: AppBar(   
+        appBar: AppBar(
         backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
         toolbarHeight: size * 0.08,
-        leading: _selectedMovie != null
-        ? IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white, size: 24,),
-          onPressed: () {
-            if(widget.band) {
-              Navigator.of(context).pop();
-            } else {
-              setState(() {
-                _selectedMovie = null;
-              });
-            }
-          },
-        )
-        : null,
-        title: Center(
-        child: SingleChildScrollView(
-          padding: EdgeInsets.zero,
-          scrollDirection: Axis.horizontal,
-          child: Text(
-            _selectedMovie != null ? _selectedMovie['title'] : 'Seleccionar Película',
-            style: GoogleFonts.oswald(
-              textStyle: const TextStyle( fontSize: 20, fontWeight: FontWeight.bold,color: Colors.white, ),
+        title: Stack(
+          children: [
+            if (_selectedMovie != null)
+              Align(
+                alignment: Alignment.centerLeft,
+                child: !widget.band
+                ? IconButton(
+                  icon: const Icon(
+                    Icons.arrow_back,
+                    color: Colors.white,
+                    size: 24,
+                  ),
+                  onPressed: () {
+                    if (widget.band) {
+                      Navigator.of(context).pop();
+                    } else {
+                      setState(() {
+                        _selectedMovie = null;
+                      });
+                    }
+                  },
+                )
+                : null,
+              ),
+            Align(
+              alignment: Alignment.center,
+              child: Padding(
+                padding: widget.band
+                ? const EdgeInsets.only(left: 0.0, right: 50.0)
+                : const EdgeInsets.only(top: 8.0, left: 48.0, right: 48.0),
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Text(
+                    _selectedMovie != null ? _selectedMovie!['title'] : 'Seleccionar Película',
+                    style: GoogleFonts.oswald(
+                      textStyle: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
               ),
             ),
-          ),
+          ],
         ),
       ),
     body: Container(
@@ -252,10 +273,7 @@ class _TabTicketScreenState extends State<TabTicketScreen> {
                   Container(
                     height: size * 0.30, 
                     color: const Color.fromRGBO(29, 29, 39, 1),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 8.0),
-                      child: _buildTimeSelection(),
-                    ),
+                    child:  _buildTimeSelection(),
                   ),
                   Expanded(
                     child: Container(
@@ -330,9 +348,9 @@ class _TabTicketScreenState extends State<TabTicketScreen> {
                                         backgroundColor: MaterialStateProperty.all(Colors.transparent),
                                         foregroundColor: MaterialStateProperty.resolveWith<Color>((Set<MaterialState> states) {
                                           if (states.contains(MaterialState.disabled)) {
-                                          return Colors.grey; // Color del texto cuando el botón está deshabilitado
+                                          return Colors.grey; 
                                         }
-                                          return Colors.white; // Color del texto cuando el botón está habilitado
+                                          return Colors.white; 
                                       }),
                                     ),
                                       child: const Text('Reservar Tiquetes', style: TextStyle(fontSize: 18)),

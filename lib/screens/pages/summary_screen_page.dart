@@ -207,10 +207,10 @@ class TicketsSummaryBox extends StatelessWidget {
                   ),
                   ],
                 ),
-        ),
-    );
-  }
-}
+              ),
+          );
+        }
+      }
 
 class ConfirmBookingsButton extends StatefulWidget {
   final dynamic selectedMovie;
@@ -276,10 +276,7 @@ class ConfirmBookingsButton extends StatefulWidget {
           );
 
            final bookingProvider = Provider.of<BookingProvider>(context, listen: false);
-           bookingProvider.addBooking(booking);
-
-
-          
+           bookingProvider.addBooking(booking);       
 
           Navigator.of(context).push(
             MaterialPageRoute(builder: (context) => const SuccessScreen()),
@@ -307,5 +304,4 @@ class ConfirmBookingsButton extends StatefulWidget {
     );
   }
 
-  
 }

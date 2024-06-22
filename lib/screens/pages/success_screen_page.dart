@@ -3,9 +3,10 @@ import 'package:flutter/scheduler.dart';
 import 'package:go_router/go_router.dart';
 
 class SuccessScreen extends StatefulWidget {
-  const SuccessScreen({Key? key}) : super(key: key);
+  const SuccessScreen({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _SuccessScreenState createState() => _SuccessScreenState();
 }
 
@@ -26,8 +27,8 @@ class _SuccessScreenState extends State<SuccessScreen>
     );
 
     _positionAnimation = Tween<double>(
-      begin: 1.0, // Comienza abajo de la pantalla
-      end: 0.0, // Termina arriba de la pantalla
+      begin: 1.0,
+      end: 0.0, 
     ).animate(
       CurvedAnimation(
         parent: _controller,
@@ -36,8 +37,8 @@ class _SuccessScreenState extends State<SuccessScreen>
     );
 
     _sizeAnimation = Tween<double>(
-      begin: 0.1, // Tamaño pequeño al principio
-      end: 1.0, // Tamaño completo al final
+      begin: 0.1, 
+      end: 1.0, 
     ).animate(
       CurvedAnimation(
         parent: _controller,

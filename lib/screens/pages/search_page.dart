@@ -4,7 +4,10 @@ import 'package:the_movie_data_base/services/api.service.dart';
 import 'package:page_transition/page_transition.dart';
 
 class SearchPage extends StatefulWidget {
+  const SearchPage({super.key});
+
   @override
+  // ignore: library_private_types_in_public_api
   _SearchPageState createState() => _SearchPageState();
 }
 
@@ -13,7 +16,7 @@ class _SearchPageState extends State<SearchPage> {
   final ApiService apiService = ApiService();
   List<dynamic> _searchResults = [];
   bool _isSearching = false;
-  Map<int, String> _genres = {}; // Variable para almacenar los géneros
+  Map<int, String> _genres = {}; 
 
   @override
   void initState() {
@@ -77,7 +80,7 @@ void _searchMovies(String query) async {
             hintStyle: TextStyle(color: Colors.grey),
           ),
           style: const TextStyle(color: Colors.white),
-          onChanged: (query) => _searchMovies(query), // Realiza la búsqueda en tiempo real
+          onChanged: (query) => _searchMovies(query), 
         ),
         backgroundColor: Colors.black,
         actions: [
